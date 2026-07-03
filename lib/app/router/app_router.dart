@@ -20,12 +20,13 @@ import '../../features/coach/presentation/coach_packages_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/shell/presentation/admin_unsupported_screen.dart';
-import '../../features/shell/presentation/coming_soon_screen.dart';
 import '../../features/sessions/presentation/schedule_screen.dart';
 import '../../features/shell/presentation/main_shell_screen.dart';
 import '../../features/training_packages/presentation/package_detail_screen.dart';
 import '../../features/training_packages/presentation/package_list_screen.dart';
 import '../../features/training_plan/presentation/assessment_screen.dart';
+import '../../features/wallet/presentation/coach_wallet_screen.dart';
+import '../../features/wallet/presentation/withdrawal_coming_soon_screen.dart';
 import '../../features/training_plan/presentation/progress_checkins_screen.dart';
 import '../../features/training_plan/presentation/training_plan_screen.dart';
 import 'route_names.dart';
@@ -245,8 +246,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.coachWallet,
-        builder: (context, state) =>
-            const ComingSoonScreen(title: 'Ví của tôi'),
+        builder: (context, state) => const CoachWalletScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.withdrawalComingSoon,
+        builder: (context, state) => const WithdrawalComingSoonScreen(),
       ),
     ],
   );
