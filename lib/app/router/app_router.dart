@@ -8,11 +8,16 @@ import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/auth/presentation/verify_email_screen.dart';
+import '../../features/coach/presentation/coach_onboarding_screen.dart';
+import '../../features/coach/presentation/coach_package_form_screen.dart';
+import '../../features/coach/presentation/coach_packages_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/shell/presentation/admin_unsupported_screen.dart';
 import '../../features/shell/presentation/coming_soon_screen.dart';
 import '../../features/shell/presentation/main_shell_screen.dart';
+import '../../features/training_packages/presentation/package_detail_screen.dart';
+import '../../features/training_packages/presentation/package_list_screen.dart';
 import 'route_names.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -105,8 +110,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RouteNames.packages,
-                builder: (context, state) =>
-                    const ComingSoonScreen(title: 'Gói tập'),
+                builder: (context, state) => const PackageListScreen(),
               ),
             ],
           ),
@@ -144,7 +148,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.packageDetail,
         builder: (context, state) =>
-            const ComingSoonScreen(title: 'Chi tiết gói tập'),
+            PackageDetailScreen(packageId: state.pathParameters['id']!),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
@@ -166,14 +170,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.coachOnboarding,
-        builder: (context, state) =>
-            const ComingSoonScreen(title: 'Đăng ký HLV'),
+        builder: (context, state) => const CoachOnboardingScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.coachPackages,
+        builder: (context, state) => const CoachPackagesScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.coachPackageCreate,
+        builder: (context, state) => const CoachPackageFormScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.coachPackageEdit,
         builder: (context, state) =>
-            const ComingSoonScreen(title: 'Gói tập của tôi'),
+            CoachPackageFormScreen(packageId: state.pathParameters['id']),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
