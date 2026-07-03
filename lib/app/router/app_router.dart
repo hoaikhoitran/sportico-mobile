@@ -22,6 +22,9 @@ import '../../features/sessions/presentation/schedule_screen.dart';
 import '../../features/shell/presentation/main_shell_screen.dart';
 import '../../features/training_packages/presentation/package_detail_screen.dart';
 import '../../features/training_packages/presentation/package_list_screen.dart';
+import '../../features/training_plan/presentation/assessment_screen.dart';
+import '../../features/training_plan/presentation/progress_checkins_screen.dart';
+import '../../features/training_plan/presentation/training_plan_screen.dart';
 import 'route_names.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -177,20 +180,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.assessment,
-        builder: (context, state) =>
-            const ComingSoonScreen(title: 'Đánh giá đầu vào'),
+        builder: (context, state) => AssessmentScreen(
+          bookingId: state.pathParameters['id']!,
+          asCoach: state.uri.queryParameters['as'] == 'coach',
+        ),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.trainingPlan,
-        builder: (context, state) =>
-            const ComingSoonScreen(title: 'Giáo án luyện tập'),
+        builder: (context, state) => TrainingPlanScreen(
+          bookingId: state.pathParameters['id']!,
+          asCoach: state.uri.queryParameters['as'] == 'coach',
+        ),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.progressCheckIns,
-        builder: (context, state) =>
-            const ComingSoonScreen(title: 'Ghi nhận tiến độ'),
+        builder: (context, state) => ProgressCheckInsScreen(
+          bookingId: state.pathParameters['id']!,
+          asCoach: state.uri.queryParameters['as'] == 'coach',
+        ),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,

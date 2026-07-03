@@ -25,16 +25,20 @@ abstract final class RouteNames {
   static const coachBookingDetail = '/coach/bookings/:id';
   static String coachBookingDetailPath(String id) => '/coach/bookings/$id';
 
-  // Personalized training (scoped to a booking)
+  // Personalized training (scoped to a booking). `?as=coach` tells the
+  // screen which side of the booking the viewer is on — needed because a
+  // user can hold both roles at once.
   static const assessment = '/bookings/:id/assessment';
-  static String assessmentPath(String bookingId) =>
-      '/bookings/$bookingId/assessment';
+  static String assessmentPath(String bookingId, {bool asCoach = false}) =>
+      '/bookings/$bookingId/assessment${asCoach ? '?as=coach' : ''}';
   static const trainingPlan = '/bookings/:id/plan';
-  static String trainingPlanPath(String bookingId) =>
-      '/bookings/$bookingId/plan';
+  static String trainingPlanPath(String bookingId, {bool asCoach = false}) =>
+      '/bookings/$bookingId/plan${asCoach ? '?as=coach' : ''}';
   static const progressCheckIns = '/bookings/:id/check-ins';
-  static String progressCheckInsPath(String bookingId) =>
-      '/bookings/$bookingId/check-ins';
+  static String progressCheckInsPath(
+    String bookingId, {
+    bool asCoach = false,
+  }) => '/bookings/$bookingId/check-ins${asCoach ? '?as=coach' : ''}';
 
   // Coach area
   static const coachOnboarding = '/coach/onboarding';

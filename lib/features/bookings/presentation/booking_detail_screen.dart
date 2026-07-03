@@ -65,7 +65,7 @@ class BookingDetailScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.md),
                 _MoneyCard(booking: booking, asCoach: asCoach),
                 const SizedBox(height: AppSpacing.md),
-                _PersonalizedLinks(bookingId: bookingId),
+                _PersonalizedLinks(bookingId: bookingId, asCoach: asCoach),
                 const SizedBox(height: AppSpacing.lg),
                 Text('Các buổi tập', style: AppTextStyles.sectionTitle),
                 const SizedBox(height: AppSpacing.sm),
@@ -261,9 +261,10 @@ class _MoneyCard extends StatelessWidget {
 }
 
 class _PersonalizedLinks extends StatelessWidget {
-  const _PersonalizedLinks({required this.bookingId});
+  const _PersonalizedLinks({required this.bookingId, required this.asCoach});
 
   final String bookingId;
+  final bool asCoach;
 
   @override
   Widget build(BuildContext context) {
@@ -282,7 +283,9 @@ class _PersonalizedLinks extends StatelessWidget {
               Icons.chevron_right_rounded,
               color: AppColors.textSecondary,
             ),
-            onTap: () => context.push(RouteNames.assessmentPath(bookingId)),
+            onTap: () => context.push(
+              RouteNames.assessmentPath(bookingId, asCoach: asCoach),
+            ),
           ),
           const Divider(indent: 52),
           ListTile(
@@ -296,7 +299,9 @@ class _PersonalizedLinks extends StatelessWidget {
               Icons.chevron_right_rounded,
               color: AppColors.textSecondary,
             ),
-            onTap: () => context.push(RouteNames.trainingPlanPath(bookingId)),
+            onTap: () => context.push(
+              RouteNames.trainingPlanPath(bookingId, asCoach: asCoach),
+            ),
           ),
           const Divider(indent: 52),
           ListTile(
@@ -310,8 +315,9 @@ class _PersonalizedLinks extends StatelessWidget {
               Icons.chevron_right_rounded,
               color: AppColors.textSecondary,
             ),
-            onTap: () =>
-                context.push(RouteNames.progressCheckInsPath(bookingId)),
+            onTap: () => context.push(
+              RouteNames.progressCheckInsPath(bookingId, asCoach: asCoach),
+            ),
           ),
         ],
       ),
