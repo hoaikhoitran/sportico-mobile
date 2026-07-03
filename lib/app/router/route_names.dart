@@ -51,4 +51,7 @@ abstract final class RouteNames {
 
   // Notifications
   static const notifications = '/notifications';
+
+  // Admin accounts get an "unsupported on mobile" screen in phase 1
+  static const adminUnsupported = '/admin-unsupported';
 }
