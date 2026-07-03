@@ -8,6 +8,7 @@ import '../../../app/theme/app_spacing.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../auth/presentation/auth_controller.dart';
+import '../../notifications/presentation/notifications_controller.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -47,13 +48,8 @@ class HomeScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                IconButton(
-                  onPressed: () => context.push(RouteNames.notifications),
-                  icon: const Icon(Icons.notifications_outlined),
-                  style: IconButton.styleFrom(
-                    backgroundColor: AppColors.surface,
-                    side: const BorderSide(color: AppColors.divider),
-                  ),
+                _NotificationBell(
+                  onTap: () => context.push(RouteNames.notifications),
                 ),
               ],
             ),
@@ -114,6 +110,31 @@ class HomeScreen extends ConsumerWidget {
               _CoachShortcuts(),
             ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NotificationBell extends ConsumerWidget {
+  const _NotificationBell({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final unread = ref.watch(unreadCountProvider).value ?? 0;
+    return Badge.count(
+      count: unread,
+      isLabelVisible: unread > 0,
+      backgroundColor: AppColors.accentOrange,
+      offset: const Offset(-4, 4),
+      child: IconButton(
+        onPressed: onTap,
+        icon: const Icon(Icons.notifications_outlined),
+        style: IconButton.styleFrom(
+          backgroundColor: AppColors.surface,
+          side: const BorderSide(color: AppColors.divider),
         ),
       ),
     );

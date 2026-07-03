@@ -8,6 +8,9 @@ import '../../features/auth/presentation/login_screen.dart';
 import '../../features/bookings/presentation/booking_detail_screen.dart';
 import '../../features/bookings/presentation/coach_bookings_screen.dart';
 import '../../features/bookings/presentation/learner_bookings_screen.dart';
+import '../../features/chat/presentation/chat_detail_screen.dart';
+import '../../features/chat/presentation/chat_rooms_screen.dart';
+import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/auth/presentation/verify_email_screen.dart';
@@ -133,8 +136,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RouteNames.messages,
-                builder: (context, state) =>
-                    const ComingSoonScreen(title: 'Tin nhắn'),
+                builder: (context, state) => const ChatRoomsScreen(),
               ),
             ],
           ),
@@ -203,8 +205,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.chatDetail,
+        builder: (context, state) => ChatDetailScreen(
+          roomId: state.pathParameters['roomId']!,
+          title: state.extra as String?,
+        ),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.notifications,
-        builder: (context, state) => const ComingSoonScreen(title: 'Thông báo'),
+        builder: (context, state) => const NotificationsScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
