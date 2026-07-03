@@ -1,0 +1,79 @@
+/// Every backend route used by the app — phase-1 allow-list only.
+///
+/// Legacy modules (`/api/packages`, `/api/coach-packages`, `/api/posts`),
+/// PayOS purchase, and withdrawal-request endpoints are intentionally absent.
+abstract final class ApiEndpoints {
+  // Auth
+  static const register = '/api/auth/register';
+  static const verifyEmail = '/api/auth/verify-email';
+  static const login = '/api/auth/login';
+  static const refreshToken = '/api/auth/refresh-token';
+  static const coachRegister = '/api/coaches/register';
+
+  // Current user profile (documented in docs/api/users.md)
+  static const me = '/api/users/me';
+
+  // Training packages
+  static const publicPackages = '/api/public/training-packages';
+  static String publicPackage(String id) => '/api/public/training-packages/$id';
+  static const packages = '/api/training-packages';
+  static const myPackages = '/api/training-packages/me';
+  static String myPackage(String id) => '/api/training-packages/me/$id';
+  static String package(String id) => '/api/training-packages/$id';
+  static String archivePackage(String id) =>
+      '/api/training-packages/$id/archive';
+
+  // Bookings
+  static const purchaseManual = '/api/bookings/purchase/manual';
+  static const myBookings = '/api/bookings/me';
+  static String booking(String id) => '/api/bookings/$id';
+  static const coachBookings = '/api/bookings/coach';
+  static String coachBooking(String id) => '/api/bookings/coach/$id';
+
+  // Training sessions
+  static String bookingSessions(String bookingId) =>
+      '/api/bookings/$bookingId/sessions';
+  static const learnerSessions = '/api/learners/me/training-sessions';
+  static const coachSessions = '/api/coaches/me/training-sessions';
+  static String confirmSession(String id) =>
+      '/api/training-sessions/$id/confirm';
+  static String cancelSession(String id) => '/api/training-sessions/$id/cancel';
+  static String completeSession(String id) =>
+      '/api/training-sessions/$id/complete';
+
+  // Personalized training
+  static String assessment(String bookingId) =>
+      '/api/bookings/$bookingId/assessment';
+  static String trainingPlan(String bookingId) =>
+      '/api/bookings/$bookingId/training-plan';
+  static String updateTrainingPlan(String id) => '/api/training-plans/$id';
+  static String planWeeks(String planId) => '/api/training-plans/$planId/weeks';
+  static String weekDays(String weekId) =>
+      '/api/training-plan-weeks/$weekId/days';
+  static String dayExercises(String dayId) =>
+      '/api/training-plan-days/$dayId/exercises';
+  static String exercise(String id) => '/api/training-plan-exercises/$id';
+  static String progressCheckIns(String bookingId) =>
+      '/api/bookings/$bookingId/progress-checkins';
+  static String checkInFeedback(String id) =>
+      '/api/progress-checkins/$id/coach-feedback';
+
+  // Chat
+  static const chatRooms = '/api/chat/rooms';
+  static String chatMessages(String roomId) =>
+      '/api/chat/rooms/$roomId/messages';
+
+  // Notifications
+  static const notifications = '/api/notifications/me';
+  static const unreadCount = '/api/notifications/me/unread-count';
+  static String markNotificationRead(String id) =>
+      '/api/notifications/$id/read';
+  static const markAllNotificationsRead = '/api/notifications/me/read-all';
+
+  // Coach wallet (read-only in phase 1)
+  static const coachWallet = '/api/coaches/me/wallet';
+  static const coachWalletTransactions = '/api/coaches/me/wallet/transactions';
+
+  // Public user profile
+  static String publicUser(String id) => '/api/users/$id';
+}
