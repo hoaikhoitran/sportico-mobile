@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/auth_controller.dart';
 import '../../features/auth/presentation/login_screen.dart';
+import '../../features/bookings/presentation/booking_detail_screen.dart';
+import '../../features/bookings/presentation/coach_bookings_screen.dart';
+import '../../features/bookings/presentation/learner_bookings_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/auth/presentation/verify_email_screen.dart';
@@ -15,6 +18,7 @@ import '../../features/home/presentation/home_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/shell/presentation/admin_unsupported_screen.dart';
 import '../../features/shell/presentation/coming_soon_screen.dart';
+import '../../features/sessions/presentation/schedule_screen.dart';
 import '../../features/shell/presentation/main_shell_screen.dart';
 import '../../features/training_packages/presentation/package_detail_screen.dart';
 import '../../features/training_packages/presentation/package_list_screen.dart';
@@ -118,8 +122,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: RouteNames.schedule,
-                builder: (context, state) =>
-                    const ComingSoonScreen(title: 'Lịch tập'),
+                builder: (context, state) => const ScheduleScreen(),
               ),
             ],
           ),
@@ -153,14 +156,41 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.bookings,
-        builder: (context, state) =>
-            const ComingSoonScreen(title: 'Đơn đăng ký'),
+        builder: (context, state) => const LearnerBookingsScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.bookingDetail,
+        builder: (context, state) => BookingDetailScreen(
+          bookingId: state.pathParameters['id']!,
+          asCoach: false,
+        ),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.coachBookingDetail,
+        builder: (context, state) => BookingDetailScreen(
+          bookingId: state.pathParameters['id']!,
+          asCoach: true,
+        ),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.assessment,
         builder: (context, state) =>
-            const ComingSoonScreen(title: 'Chi tiết đơn'),
+            const ComingSoonScreen(title: 'Đánh giá đầu vào'),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.trainingPlan,
+        builder: (context, state) =>
+            const ComingSoonScreen(title: 'Giáo án luyện tập'),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.progressCheckIns,
+        builder: (context, state) =>
+            const ComingSoonScreen(title: 'Ghi nhận tiến độ'),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
@@ -191,8 +221,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.coachBookings,
-        builder: (context, state) =>
-            const ComingSoonScreen(title: 'Học viên đăng ký'),
+        builder: (context, state) => const CoachBookingsScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
