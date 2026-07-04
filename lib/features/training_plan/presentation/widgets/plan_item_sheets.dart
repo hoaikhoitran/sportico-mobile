@@ -6,6 +6,7 @@ import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/network/api_result.dart';
 import '../../../../core/widgets/app_button.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../data/models/training_plan.dart';
 import '../../data/training_plan_api.dart';
@@ -141,9 +142,7 @@ class _AddWeekSheetState extends ConsumerState<_AddWeekSheet> {
         Navigator.of(context).pop(true);
       case ApiFailure(:final error):
         setState(() => _submitting = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error.userMessage)));
+        AppSnackBar.error(context, error.userMessage);
     }
   }
 
@@ -206,9 +205,7 @@ class _AddDaySheetState extends ConsumerState<_AddDaySheet> {
   Future<void> _submit() async {
     final number = int.tryParse(_number.text.trim());
     if (number == null || number < 1 || _title.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng nhập số ngày và tên buổi.')),
-      );
+      AppSnackBar.error(context, 'Vui lòng nhập số ngày và tên buổi.');
       return;
     }
 
@@ -228,9 +225,7 @@ class _AddDaySheetState extends ConsumerState<_AddDaySheet> {
         Navigator.of(context).pop(true);
       case ApiFailure(:final error):
         setState(() => _submitting = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error.userMessage)));
+        AppSnackBar.error(context, error.userMessage);
     }
   }
 
@@ -314,9 +309,7 @@ class _ExerciseSheetState extends ConsumerState<_ExerciseSheet> {
 
   Future<void> _submit() async {
     if (_name.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui lòng nhập tên bài tập.')),
-      );
+      AppSnackBar.error(context, 'Vui lòng nhập tên bài tập.');
       return;
     }
     final order = _intOf(_order) ?? widget.suggestedOrder;
@@ -351,9 +344,7 @@ class _ExerciseSheetState extends ConsumerState<_ExerciseSheet> {
         Navigator.of(context).pop(true);
       case ApiFailure(:final error):
         setState(() => _submitting = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error.userMessage)));
+        AppSnackBar.error(context, error.userMessage);
     }
   }
 

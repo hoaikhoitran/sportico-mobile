@@ -9,6 +9,7 @@ import '../../../app/theme/app_text_styles.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/app_snack_bar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../auth/presentation/widgets/auth_scaffold.dart';
@@ -85,10 +86,9 @@ class _CoachOnboardingScreenState extends ConsumerState<CoachOnboardingScreen> {
         // Rotate tokens so coach-only endpoints authorize right away.
         await ref.read(authControllerProvider.notifier).onRolesChanged();
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Chúc mừng! Bạn đã trở thành huấn luyện viên.'),
-          ),
+        AppSnackBar.success(
+          context,
+          'Chúc mừng! Bạn đã trở thành huấn luyện viên.',
         );
         context.pop();
       case ApiFailure(:final error):

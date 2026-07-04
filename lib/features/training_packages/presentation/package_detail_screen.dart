@@ -15,6 +15,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_error_state.dart';
 import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/app_snack_bar.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../bookings/data/booking_repository.dart';
 import '../data/models/training_package.dart';
@@ -52,17 +53,14 @@ class _PackageDetailScreenState extends ConsumerState<PackageDetailScreen> {
 
     switch (result) {
       case ApiSuccess(data: final booking):
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Đăng ký thành công! Lịch tập của bạn đã được tạo.'),
-          ),
+        AppSnackBar.success(
+          context,
+          'Đăng ký thành công! Lịch tập của bạn đã được tạo.',
         );
         ref.invalidate(packageDetailProvider(widget.packageId));
         context.push(RouteNames.bookingDetailPath(booking.id));
       case ApiFailure(:final error):
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error.userMessage)));
+        AppSnackBar.error(context, error.userMessage);
     }
   }
 

@@ -9,7 +9,8 @@ import '../../../app/theme/app_spacing.dart';
 import '../../../core/network/api_error.dart';
 import '../../../core/widgets/app_empty_state.dart';
 import '../../../core/widgets/app_error_state.dart';
-import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/app_skeleton.dart';
+import '../data/sport_options_provider.dart';
 import 'package_list_controller.dart';
 import 'widgets/package_card.dart';
 
@@ -55,9 +56,18 @@ class _PackageListScreenState extends ConsumerState<PackageListScreen> {
     });
   }
 
+  void _clearFilters() {
+    _debounce?.cancel();
+    _searchController.clear();
+    setState(() {});
+    ref.read(packageListControllerProvider.notifier).clearFilters();
+  }
+
   @override
   Widget build(BuildContext context) {
     final listState = ref.watch(packageListControllerProvider);
+    final controller = ref.read(packageListControllerProvider.notifier);
+    final sports = ref.watch(sportOptionsProvider).value ?? const [];
 
     return Scaffold(
       appBar: AppBar(title: const Text('Gói tập')),
@@ -80,6 +90,7 @@ class _PackageListScreenState extends ConsumerState<PackageListScreen> {
                   prefixIcon: const Icon(Icons.search_rounded, size: 20),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
+                          tooltip: 'Xóa tìm kiếm',
                           icon: const Icon(Icons.close_rounded, size: 18),
                           onPressed: () {
                             _searchController.clear();
@@ -91,17 +102,51 @@ class _PackageListScreenState extends ConsumerState<PackageListScreen> {
                 ),
               ),
             ),
+            if (sports.isNotEmpty)
+              SizedBox(
+                height: 40,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.screenH,
+                  ),
+                  children: [
+                    for (final (label, id) in [
+                      ('Tất cả', null),
+                      for (final sport in sports) (sport.name, sport.id),
+                    ]) ...[
+                      ChoiceChip(
+                        label: Text(label),
+                        selected: controller.sportId == id,
+                        onSelected: (_) => controller.setSport(id),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                    ],
+                  ],
+                ),
+              ),
+            const SizedBox(height: AppSpacing.xs),
             Expanded(
               child: switch (listState) {
                 AsyncData(:final value) =>
                   value.isEmpty
-                      ? AppEmptyState(
-                          icon: Icons.fitness_center_rounded,
-                          title: 'Chưa có gói tập nào',
-                          message: _searchController.text.isEmpty
-                              ? 'Hiện chưa có gói tập nào được mở bán. Quay lại sau nhé!'
-                              : 'Không tìm thấy gói tập phù hợp với từ khóa.',
-                        )
+                      ? (controller.hasFilter
+                            ? AppEmptyState(
+                                icon: Icons.search_off_rounded,
+                                title: 'Không tìm thấy gói tập',
+                                message:
+                                    'Không có gói tập nào khớp với tìm kiếm '
+                                    'hoặc bộ lọc hiện tại.',
+                                actionLabel: 'Xóa bộ lọc',
+                                onAction: _clearFilters,
+                              )
+                            : const AppEmptyState(
+                                icon: Icons.fitness_center_rounded,
+                                title: 'Chưa có gói tập nào',
+                                message:
+                                    'Hiện chưa có gói tập nào được mở bán. '
+                                    'Quay lại sau nhé!',
+                              ))
                       : RefreshIndicator(
                           onRefresh: () => ref
                               .read(packageListControllerProvider.notifier)
@@ -144,7 +189,7 @@ class _PackageListScreenState extends ConsumerState<PackageListScreen> {
                       .read(packageListControllerProvider.notifier)
                       .refresh(),
                 ),
-                _ => const AppLoading(),
+                _ => const AppSkeletonList(),
               },
             ),
           ],

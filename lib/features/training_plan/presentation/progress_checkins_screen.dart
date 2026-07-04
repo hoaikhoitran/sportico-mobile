@@ -12,6 +12,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_empty_state.dart';
 import '../../../core/widgets/app_error_state.dart';
 import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/app_snack_bar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../data/models/progress_checkin.dart';
 import '../data/training_plan_api.dart';
@@ -302,9 +303,7 @@ class _CheckInSheetState extends ConsumerState<_CheckInSheet> {
         Navigator.of(context).pop(true);
       case ApiFailure(:final error):
         setState(() => _submitting = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error.userMessage)));
+        AppSnackBar.error(context, error.userMessage);
     }
   }
 
@@ -482,9 +481,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet> {
         Navigator.of(context).pop(true);
       case ApiFailure(:final error):
         setState(() => _submitting = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error.userMessage)));
+        AppSnackBar.error(context, error.userMessage);
     }
   }
 

@@ -8,6 +8,7 @@ import '../../../core/network/api_error.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../core/widgets/app_error_state.dart';
 import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/app_snack_bar.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../data/models/chat_models.dart';
 import 'chat_controller.dart';
@@ -63,9 +64,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     setState(() => _sending = false);
 
     if (error != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(error.userMessage)));
+      AppSnackBar.error(context, error.userMessage);
       return;
     }
     _inputController.clear();

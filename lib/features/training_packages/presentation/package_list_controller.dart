@@ -6,10 +6,17 @@ import '../../../core/utils/paged_list_state.dart';
 import '../data/models/training_package.dart';
 import '../data/training_package_repository.dart';
 
-/// Public catalog list: keyword search + infinite scroll.
+/// Public catalog list: keyword search + sport filter + infinite scroll.
 class PackageListController
     extends AsyncNotifier<PagedListState<TrainingPackage>> {
   String _keyword = '';
+  int? _sportId;
+
+  /// Whether a keyword or sport filter is currently applied — used by the
+  /// screen to offer a "clear filters" action on empty results.
+  bool get hasFilter => _keyword.isNotEmpty || _sportId != null;
+
+  int? get sportId => _sportId;
 
   @override
   Future<PagedListState<TrainingPackage>> build() => _fetchFirstPage();
@@ -17,7 +24,11 @@ class PackageListController
   Future<PagedListState<TrainingPackage>> _fetchFirstPage() async {
     final result = await ref
         .read(trainingPackageRepositoryProvider)
-        .publicList(keyword: _keyword, pageSize: AppConfig.defaultPageSize);
+        .publicList(
+          keyword: _keyword,
+          sportId: _sportId,
+          pageSize: AppConfig.defaultPageSize,
+        );
     return switch (result) {
       ApiSuccess(:final data) => PagedListState.fromFirstPage(data),
       ApiFailure(:final error) => throw error,
@@ -26,6 +37,20 @@ class PackageListController
 
   Future<void> search(String keyword) async {
     _keyword = keyword.trim();
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(_fetchFirstPage);
+  }
+
+  Future<void> setSport(int? sportId) async {
+    if (_sportId == sportId) return;
+    _sportId = sportId;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(_fetchFirstPage);
+  }
+
+  Future<void> clearFilters() async {
+    _keyword = '';
+    _sportId = null;
     state = const AsyncLoading();
     state = await AsyncValue.guard(_fetchFirstPage);
   }
@@ -43,6 +68,7 @@ class PackageListController
         .read(trainingPackageRepositoryProvider)
         .publicList(
           keyword: _keyword,
+          sportId: _sportId,
           pageNumber: current.pageNumber + 1,
           pageSize: AppConfig.defaultPageSize,
         );

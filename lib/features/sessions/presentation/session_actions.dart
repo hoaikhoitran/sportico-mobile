@@ -6,6 +6,7 @@ import '../../../app/theme/app_text_styles.dart';
 import '../../../core/network/api_error.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/app_snack_bar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../data/models/training_session.dart';
 import '../data/training_session_repository.dart';
@@ -99,13 +100,12 @@ class SessionActions {
   }) async {
     final result = await action();
     if (!context.mounted) return result.isSuccess;
-    final message = switch (result) {
-      ApiSuccess() => successMessage,
-      ApiFailure(:final ApiError error) => error.userMessage,
-    };
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    switch (result) {
+      case ApiSuccess():
+        AppSnackBar.success(context, successMessage);
+      case ApiFailure(:final ApiError error):
+        AppSnackBar.error(context, error.userMessage);
+    }
     return result.isSuccess;
   }
 }
