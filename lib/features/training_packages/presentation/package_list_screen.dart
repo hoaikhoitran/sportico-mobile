@@ -9,7 +9,7 @@ import '../../../app/theme/app_spacing.dart';
 import '../../../core/network/api_error.dart';
 import '../../../core/widgets/app_empty_state.dart';
 import '../../../core/widgets/app_error_state.dart';
-import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/app_skeleton.dart';
 import '../data/sport_options_provider.dart';
 import 'package_list_controller.dart';
 import 'widgets/package_card.dart';
@@ -90,6 +90,7 @@ class _PackageListScreenState extends ConsumerState<PackageListScreen> {
                   prefixIcon: const Icon(Icons.search_rounded, size: 20),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
+                          tooltip: 'Xóa tìm kiếm',
                           icon: const Icon(Icons.close_rounded, size: 18),
                           onPressed: () {
                             _searchController.clear();
@@ -188,7 +189,7 @@ class _PackageListScreenState extends ConsumerState<PackageListScreen> {
                       .read(packageListControllerProvider.notifier)
                       .refresh(),
                 ),
-                _ => const AppLoading(),
+                _ => const AppSkeletonList(),
               },
             ),
           ],

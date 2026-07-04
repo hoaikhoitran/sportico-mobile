@@ -11,7 +11,7 @@ import '../../../core/utils/date_formatter.dart';
 import '../../../core/utils/paged_list_state.dart';
 import '../../../core/widgets/app_empty_state.dart';
 import '../../../core/widgets/app_error_state.dart';
-import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/app_skeleton.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../data/models/training_session.dart';
 import 'schedule_controller.dart';
@@ -174,7 +174,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                   error: error is ApiError ? error : null,
                   onRetry: _refreshAll,
                 ),
-                _ => const AppLoading(),
+                _ => const AppSkeletonList(),
               },
             ),
           ],

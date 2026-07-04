@@ -81,6 +81,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               autofillHints: const [AutofillHints.password],
               onFieldSubmitted: (_) => _submit(),
               suffix: IconButton(
+                tooltip: _obscure ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
                 icon: Icon(
                   _obscure
                       ? Icons.visibility_off_outlined

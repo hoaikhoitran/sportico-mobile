@@ -148,6 +148,7 @@ class _NotificationBell extends ConsumerWidget {
       offset: const Offset(-4, 4),
       child: IconButton(
         onPressed: onTap,
+        tooltip: 'Thông báo',
         icon: const Icon(Icons.notifications_outlined),
         style: IconButton.styleFrom(
           backgroundColor: AppColors.surface,

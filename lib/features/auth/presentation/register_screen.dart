@@ -102,6 +102,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               validator: Validators.password,
               textInputAction: TextInputAction.next,
               suffix: IconButton(
+                tooltip: _obscure ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
                 icon: Icon(
                   _obscure
                       ? Icons.visibility_off_outlined

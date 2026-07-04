@@ -8,7 +8,7 @@ import '../../../../core/widgets/app_badge.dart';
 import '../../../../core/widgets/app_card.dart';
 import '../../../../core/widgets/app_empty_state.dart';
 import '../../../../core/widgets/app_error_state.dart';
-import '../../../../core/widgets/app_loading.dart';
+import '../../../../core/widgets/app_skeleton.dart';
 import '../../data/models/booking.dart';
 import '../bookings_controller.dart';
 
@@ -130,7 +130,7 @@ class _BookingListBodyState extends ConsumerState<BookingListBody> {
               error: error is ApiError ? error : null,
               onRetry: controller.refresh,
             ),
-            _ => const AppLoading(),
+            _ => const AppSkeletonList(),
           },
         ),
       ],
