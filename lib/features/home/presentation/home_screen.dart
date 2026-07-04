@@ -58,47 +58,64 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.xl),
             Text('Truy cập nhanh', style: AppTextStyles.sectionTitle),
             const SizedBox(height: AppSpacing.sm),
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              mainAxisSpacing: AppSpacing.sm,
-              crossAxisSpacing: AppSpacing.sm,
-              childAspectRatio: 1.55,
-              children: [
-                _QuickAction(
-                  icon: Icons.fitness_center_rounded,
-                  color: AppColors.accentOrange,
-                  background: AppColors.accentOrangeSoft,
-                  title: 'Gói tập',
-                  subtitle: 'Khám phá gói luyện tập',
-                  onTap: () => context.go(RouteNames.packages),
-                ),
-                _QuickAction(
-                  icon: Icons.calendar_month_rounded,
-                  color: AppColors.info,
-                  background: AppColors.infoSoft,
-                  title: 'Lịch tập',
-                  subtitle: 'Buổi tập sắp tới',
-                  onTap: () => context.go(RouteNames.schedule),
-                ),
-                _QuickAction(
-                  icon: Icons.receipt_long_rounded,
-                  color: AppColors.success,
-                  background: AppColors.successSoft,
-                  title: 'Đơn đăng ký',
-                  subtitle: 'Gói tập đã mua',
-                  onTap: () => context.push(RouteNames.bookings),
-                ),
-                _QuickAction(
-                  icon: Icons.chat_bubble_rounded,
-                  color: AppColors.primary,
-                  background: AppColors.accentBlueSoft,
-                  title: 'Tin nhắn',
-                  subtitle: 'Trao đổi với HLV',
-                  onTap: () => context.go(RouteNames.messages),
-                ),
-              ],
+            // Rows of equally stretched cards: the height follows the
+            // content, so large system fonts or narrow screens never clip.
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: _QuickAction(
+                      icon: Icons.fitness_center_rounded,
+                      color: AppColors.accentOrange,
+                      background: AppColors.accentOrangeSoft,
+                      title: 'Gói tập',
+                      subtitle: 'Khám phá gói luyện tập',
+                      onTap: () => context.go(RouteNames.packages),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: _QuickAction(
+                      icon: Icons.calendar_month_rounded,
+                      color: AppColors.info,
+                      background: AppColors.infoSoft,
+                      title: 'Lịch tập',
+                      subtitle: 'Buổi tập sắp tới',
+                      onTap: () => context.go(RouteNames.schedule),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: _QuickAction(
+                      icon: Icons.receipt_long_rounded,
+                      color: AppColors.success,
+                      background: AppColors.successSoft,
+                      title: 'Đơn đăng ký',
+                      subtitle: 'Gói tập đã mua',
+                      onTap: () => context.push(RouteNames.bookings),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: _QuickAction(
+                      icon: Icons.chat_bubble_rounded,
+                      color: AppColors.primary,
+                      background: AppColors.accentBlueSoft,
+                      title: 'Tin nhắn',
+                      subtitle: 'Trao đổi với HLV',
+                      onTap: () => context.go(RouteNames.messages),
+                    ),
+                  ),
+                ],
+              ),
             ),
             if (auth.isCoach) ...[
               const SizedBox(height: AppSpacing.xl),
@@ -229,7 +246,7 @@ class _QuickAction extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.sm + 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             width: 34,
@@ -241,22 +258,18 @@ class _QuickAction extends StatelessWidget {
             ),
             child: Icon(icon, size: 19, color: color),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: AppTextStyles.cardTitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Text(
-                subtitle,
-                style: AppTextStyles.caption,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            title,
+            style: AppTextStyles.cardTitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            subtitle,
+            style: AppTextStyles.caption,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

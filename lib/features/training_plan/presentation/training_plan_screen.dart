@@ -14,6 +14,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_empty_state.dart';
 import '../../../core/widgets/app_error_state.dart';
 import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/app_snack_bar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../data/models/training_plan.dart';
 import '../data/training_plan_api.dart';
@@ -112,14 +113,10 @@ class _PlanView extends ConsumerWidget {
     if (!context.mounted) return;
     switch (result) {
       case ApiSuccess():
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Giáo án chuyển sang "${next.label}".')),
-        );
+        AppSnackBar.success(context, 'Giáo án chuyển sang "${next.label}".');
         onChanged();
       case ApiFailure(:final error):
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error.userMessage)));
+        AppSnackBar.error(context, error.userMessage);
     }
   }
 
@@ -440,9 +437,7 @@ class _ExerciseRow extends ConsumerWidget {
       case ApiSuccess():
         onChanged();
       case ApiFailure(:final error):
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error.userMessage)));
+        AppSnackBar.error(context, error.userMessage);
     }
   }
 
@@ -585,9 +580,7 @@ class _CreatePlanFormState extends ConsumerState<_CreatePlanForm> {
 
     switch (result) {
       case ApiSuccess():
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Đã tạo giáo án (bản nháp).')),
-        );
+        AppSnackBar.success(context, 'Đã tạo giáo án (bản nháp).');
         widget.onCreated();
       case ApiFailure(:final error):
         setState(() {

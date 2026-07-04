@@ -13,6 +13,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_empty_state.dart';
 import '../../../core/widgets/app_error_state.dart';
 import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/app_snack_bar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../data/models/learner_assessment.dart';
 import '../data/training_plan_api.dart';
@@ -332,9 +333,7 @@ class _AssessmentFormState extends ConsumerState<_AssessmentForm> {
 
     switch (result) {
       case ApiSuccess():
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Đã lưu đánh giá đầu vào.')),
-        );
+        AppSnackBar.success(context, 'Đã lưu đánh giá đầu vào.');
         widget.onDone();
       case ApiFailure(:final error):
         setState(() {

@@ -8,6 +8,7 @@ import '../../../app/theme/app_spacing.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/app_snack_bar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import 'auth_controller.dart';
 import 'widgets/auth_scaffold.dart';
@@ -54,10 +55,9 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
 
     switch (result) {
       case ApiSuccess():
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Xác thực email thành công. Mời bạn đăng nhập.'),
-          ),
+        AppSnackBar.success(
+          context,
+          'Xác thực email thành công. Mời bạn đăng nhập.',
         );
         context.go(RouteNames.login);
       case ApiFailure(:final error):

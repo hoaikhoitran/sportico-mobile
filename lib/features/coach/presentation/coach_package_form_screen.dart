@@ -13,6 +13,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_error_state.dart';
 import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/app_snack_bar.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../training_packages/data/models/training_package.dart';
 import '../../training_packages/data/models/training_package_draft.dart';
@@ -250,14 +251,11 @@ class _CoachPackageFormScreenState
     switch (result) {
       case ApiSuccess():
         ref.invalidate(coachPackagesControllerProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              widget.isEdit
-                  ? 'Đã cập nhật gói tập.'
-                  : 'Đã tạo gói tập — chờ quản trị viên duyệt.',
-            ),
-          ),
+        AppSnackBar.success(
+          context,
+          widget.isEdit
+              ? 'Đã cập nhật gói tập.'
+              : 'Đã tạo gói tập — chờ quản trị viên duyệt.',
         );
         context.pop();
       case ApiFailure(:final error):

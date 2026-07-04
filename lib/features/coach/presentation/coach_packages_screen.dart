@@ -12,6 +12,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_empty_state.dart';
 import '../../../core/widgets/app_error_state.dart';
 import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/app_snack_bar.dart';
 import '../../training_packages/data/models/training_package.dart';
 import 'coach_packages_controller.dart';
 
@@ -72,9 +73,11 @@ class _CoachPackagesScreenState extends ConsumerState<CoachPackagesScreen> {
         .read(coachPackagesControllerProvider.notifier)
         .archive(package.id);
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(error?.userMessage ?? 'Đã lưu trữ gói tập.')),
-    );
+    if (error != null) {
+      AppSnackBar.error(context, error.userMessage);
+    } else {
+      AppSnackBar.success(context, 'Đã lưu trữ gói tập.');
+    }
   }
 
   @override
