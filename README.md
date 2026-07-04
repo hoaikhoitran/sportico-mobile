@@ -141,3 +141,4 @@ Cố ý **không** có trong bản mobile này:
   chính; vai trò trong JWT chỉ là gợi ý nhanh cho UI.
 - Chat/thông báo dùng polling nhẹ (chat 8s khi màn hình mở, dừng khi đóng)
   vì backend không có websocket.
+"# sportico-mobile" 
