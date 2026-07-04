@@ -29,16 +29,17 @@ class SecureTokenStorage {
   static const _kExpiresAt = 'sportico_expires_at';
   static const _kEmail = 'sportico_auth_email';
 
+  /// Writes are sequential on purpose: tokens rotate as a pair, and a
+  /// concurrent reader must never observe a new access token next to an old
+  /// refresh token (the stale refresh would be rejected and force a logout).
   Future<void> saveSession(AuthSession session) async {
-    await Future.wait([
-      _storage.write(key: _kAccessToken, value: session.accessToken),
-      _storage.write(key: _kRefreshToken, value: session.refreshToken),
-      _storage.write(
-        key: _kExpiresAt,
-        value: session.expiresAt?.toIso8601String(),
-      ),
-      _storage.write(key: _kEmail, value: session.email),
-    ]);
+    await _storage.write(key: _kRefreshToken, value: session.refreshToken);
+    await _storage.write(key: _kAccessToken, value: session.accessToken);
+    await _storage.write(
+      key: _kExpiresAt,
+      value: session.expiresAt?.toIso8601String(),
+    );
+    await _storage.write(key: _kEmail, value: session.email);
   }
 
   Future<AuthSession?> readSession() async {

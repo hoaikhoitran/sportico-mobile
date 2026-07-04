@@ -28,7 +28,6 @@ class TrainingPackageApi {
   Future<ApiResult<PagedResult<TrainingPackage>>> publicList({
     String? keyword,
     int? sportId,
-    String? coachId,
     int pageNumber = 1,
     int pageSize = 10,
   }) {
@@ -38,7 +37,6 @@ class TrainingPackageApi {
         queryParameters: {
           if (keyword != null && keyword.isNotEmpty) 'keyword': keyword,
           'sportId': ?sportId,
-          'coachId': ?coachId,
           'pageNumber': pageNumber,
           'pageSize': pageSize,
         },

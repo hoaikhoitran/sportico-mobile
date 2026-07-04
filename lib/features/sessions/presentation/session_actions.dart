@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../app/theme/app_text_styles.dart';
 import '../../../core/network/api_error.dart';
@@ -245,16 +244,4 @@ class _CancelSheetState extends State<_CancelSheet> {
       ),
     );
   }
-}
-
-/// Status badge tone shared by session UIs.
-extension SessionStatusTone on SessionStatus {
-  Color get toneColor => switch (this) {
-    SessionStatus.requested => AppColors.warning,
-    SessionStatus.scheduled => AppColors.info,
-    SessionStatus.completed => AppColors.success,
-    SessionStatus.cancelled => AppColors.danger,
-    SessionStatus.missed => AppColors.textSecondary,
-    SessionStatus.unknown => AppColors.textSecondary,
-  };
 }

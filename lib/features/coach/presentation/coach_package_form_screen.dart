@@ -206,6 +206,12 @@ class _CoachPackageFormScreenState
     final location = _locationController.text.trim().isEmpty && !_isOnline
         ? null
         : _locationController.text.trim();
+    // The pickers yield local calendar dates; send them as UTC day bounds.
+    // A plain `.toUtc()` of local midnight would land on the previous UTC
+    // day (UTC+7), pushing last-day slots outside [startDate, endDate] on
+    // the backend.
+    final start = _startDate!;
+    final end = _endDate!;
     final draft = TrainingPackageDraft(
       sportId: _sportId!,
       title: _titleController.text.trim(),
@@ -213,8 +219,8 @@ class _CoachPackageFormScreenState
           ? null
           : _descriptionController.text.trim(),
       price: num.parse(_priceController.text.trim()),
-      startDate: _startDate!,
-      endDate: _endDate!,
+      startDate: DateTime.utc(start.year, start.month, start.day),
+      endDate: DateTime.utc(end.year, end.month, end.day, 23, 59, 59),
       location: _isOnline ? null : location,
       isOnline: _isOnline,
       level: _level,

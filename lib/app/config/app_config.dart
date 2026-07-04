@@ -13,7 +13,4 @@ abstract final class AppConfig {
 
   /// Polling interval for chat messages (no websocket on the backend).
   static const Duration chatPollInterval = Duration(seconds: 8);
-
-  /// Polling interval for the unread notification badge.
-  static const Duration unreadCountPollInterval = Duration(seconds: 60);
 }

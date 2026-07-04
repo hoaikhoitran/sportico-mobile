@@ -32,14 +32,16 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   bool _coachView = false;
   bool _upcoming = true;
 
-  ScheduleArgs get _args => (asCoach: _coachView, upcoming: _upcoming);
+  /// The provider args currently on screen — set in build, because the
+  /// effective role can differ from the toggle (single-role accounts).
+  ScheduleArgs _activeArgs = (asCoach: false, upcoming: true);
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(() {
       if (_scrollController.position.extentAfter < 400) {
-        ref.read(scheduleControllerProvider(_args).notifier).loadMore();
+        ref.read(scheduleControllerProvider(_activeArgs).notifier).loadMore();
       }
     });
   }
@@ -51,7 +53,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   }
 
   void _refreshAll() {
-    ref.invalidate(scheduleControllerProvider(_args));
+    ref.invalidate(scheduleControllerProvider(_activeArgs));
   }
 
   @override
@@ -62,8 +64,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
     final showRoleSwitch = auth.isCoach && auth.isLearner;
     final effectiveCoachView = auth.isCoach && (_coachView || !auth.isLearner);
 
-    final args = (asCoach: effectiveCoachView, upcoming: _upcoming);
-    final listState = ref.watch(scheduleControllerProvider(args));
+    _activeArgs = (asCoach: effectiveCoachView, upcoming: _upcoming);
+    final listState = ref.watch(scheduleControllerProvider(_activeArgs));
     final actions = SessionActions(ref);
 
     return Scaffold(

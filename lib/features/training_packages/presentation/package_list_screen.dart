@@ -47,6 +47,8 @@ class _PackageListScreenState extends ConsumerState<PackageListScreen> {
   }
 
   void _onSearchChanged(String value) {
+    // Rebuild so the clear button appears/disappears with the text.
+    setState(() {});
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 450), () {
       ref.read(packageListControllerProvider.notifier).search(value);
