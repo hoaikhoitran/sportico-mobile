@@ -30,7 +30,7 @@
       "program": "lib/main.dart",
       "args": [
         "--dart-define=APP_ENV=production",
-        "--dart-define=API_BASE_URL=https://sportico-api-khoi.azurewebsites.net"
+        "--dart-define=API_BASE_URL=https://sportico-api-khoi-g3bpg4a3dnhehng8.japaneast-01.azurewebsites.net"
       ]
     }
     // Physical phone + local backend: copy a profile above and replace the

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_spacing.dart';
 import '../../../../app/theme/app_text_styles.dart';
 import '../../../../core/network/api_error.dart';
@@ -185,7 +186,7 @@ class _BookingCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: booking.progress,
               minHeight: 6,
-              backgroundColor: const Color(0xFFEDE7D8),
+              backgroundColor: AppColors.surfaceContainerHighest,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),

@@ -16,6 +16,7 @@ class SporticoApp extends ConsumerWidget {
       title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
+      themeMode: ThemeMode.light,
       routerConfig: router,
       locale: const Locale('vi'),
       supportedLocales: const [Locale('vi'), Locale('en')],

@@ -13,7 +13,7 @@ abstract final class Environment {
   /// Production backend. Not the default because its DNS is currently
   /// unreliable — opt in via `--dart-define` (see README).
   static const String productionApiBaseUrl =
-      'https://sportico-api-khoi.azurewebsites.net';
+      'https://sportico-api-khoi-g3bpg4a3dnhehng8.japaneast-01.azurewebsites.net';
 
   /// Defaults to the Android-emulator alias for a backend on the host
   /// machine — the most common dev loop. Every other target must pass

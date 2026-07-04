@@ -174,7 +174,7 @@ class _SummaryCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: booking.progress,
               minHeight: 8,
-              backgroundColor: const Color(0xFFEDE7D8),
+              backgroundColor: AppColors.surfaceContainerHighest,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),

@@ -46,7 +46,7 @@ flutter run --dart-define=APP_ENV=local --dart-define=API_BASE_URL=http://YOUR_C
 **Production:**
 
 ```bash
-flutter run --dart-define=APP_ENV=production --dart-define=API_BASE_URL=https://sportico-api-khoi.azurewebsites.net
+flutter run --dart-define=APP_ENV=production --dart-define=API_BASE_URL=https://sportico-api-khoi-g3bpg4a3dnhehng8.japaneast-01.azurewebsites.net
 ```
 
 Dùng VS Code: chọn sẵn profile trong `.vscode/launch.json` —
@@ -67,8 +67,8 @@ Dùng VS Code: chọn sẵn profile trong `.vscode/launch.json` —
   `android:usesCleartextTraffic="true"` trong
   `android/app/src/debug/AndroidManifest.xml` (chỉ áp dụng debug; release vẫn
   chặn HTTP). iOS đã bật `NSAllowsLocalNetworking` cho backend local.
-- **DNS production lỗi** (`sportico-api-khoi.azurewebsites.net` không phân
-  giải) → chuyển sang backend local bằng `--dart-define` như trên.
+- **DNS production lỗi** (`sportico-api-khoi-g3bpg4a3dnhehng8.japaneast-01.azurewebsites.net`
+  không phân giải) → chuyển sang backend local bằng `--dart-define` như trên.
 
 ## Kiểm tra chất lượng
 

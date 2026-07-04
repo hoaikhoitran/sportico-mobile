@@ -11,7 +11,7 @@ import '../../../core/utils/date_formatter.dart';
 import '../../../core/utils/paged_list_state.dart';
 import '../../../core/widgets/app_empty_state.dart';
 import '../../../core/widgets/app_error_state.dart';
-import '../../../core/widgets/app_loading.dart';
+import '../../../core/widgets/app_skeleton.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../data/models/training_session.dart';
 import 'schedule_controller.dart';
@@ -174,7 +174,14 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                   error: error is ApiError ? error : null,
                   onRetry: _refreshAll,
                 ),
-                _ => const AppLoading(),
+                _ => const AppSkeletonList(
+                  padding: EdgeInsets.fromLTRB(
+                    AppSpacing.screenH,
+                    AppSpacing.xs,
+                    AppSpacing.screenH,
+                    AppSpacing.xl,
+                  ),
+                ),
               },
             ),
           ],
@@ -224,22 +231,7 @@ class _GroupedSessionList extends StatelessWidget {
           : DateTime(start.year, start.month, start.day);
       if (day != null && day != currentDay) {
         currentDay = day;
-        rows.add(
-          Padding(
-            padding: const EdgeInsets.only(
-              top: AppSpacing.md,
-              bottom: AppSpacing.xs,
-            ),
-            child: Text(
-              DateFormatter.weekdayDate(start).toUpperCase(),
-              style: AppTextStyles.caption.copyWith(
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.4,
-                color: AppColors.accentBlue,
-              ),
-            ),
-          ),
-        );
+        rows.add(_DayHeader(label: DateFormatter.weekdayDate(start)));
       }
       rows.add(
         Padding(
@@ -273,6 +265,45 @@ class _GroupedSessionList extends StatelessWidget {
             child: Center(child: CircularProgressIndicator()),
           ),
       ],
+    );
+  }
+}
+
+/// Soft date separator between session groups: a primary dot, the weekday
+/// label, and a hairline that runs to the edge — easier to scan than a lone
+/// line of uppercase text.
+class _DayHeader extends StatelessWidget {
+  const _DayHeader({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.xs),
+      child: Row(
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: const BoxDecoration(
+              color: AppColors.primary,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          Text(
+            label.toUpperCase(),
+            style: AppTextStyles.caption.copyWith(
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: AppColors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          const Expanded(child: Divider(height: 1)),
+        ],
+      ),
     );
   }
 }
