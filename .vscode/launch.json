@@ -1,0 +1,41 @@
+{
+  // Sportico run profiles. Pick the one matching your device + backend.
+  // The exact equivalent CLI commands are documented in README.md.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Sportico Local Android Emulator",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=APP_ENV=local",
+        "--dart-define=API_BASE_URL=http://10.0.2.2:5095"
+      ]
+    },
+    {
+      "name": "Sportico Local iOS Simulator",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=APP_ENV=local",
+        "--dart-define=API_BASE_URL=http://127.0.0.1:5095"
+      ]
+    },
+    {
+      "name": "Sportico Production",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--dart-define=APP_ENV=production",
+        "--dart-define=API_BASE_URL=https://sportico-api-khoi.azurewebsites.net"
+      ]
+    }
+    // Physical phone + local backend: copy a profile above and replace the
+    // URL with your computer's LAN IPv4 (ipconfig / ifconfig), e.g.
+    // "--dart-define=API_BASE_URL=http://192.168.1.10:5095".
+    // Phone and computer must be on the same Wi-Fi network.
+  ]
+}

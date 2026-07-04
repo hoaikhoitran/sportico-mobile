@@ -8,23 +8,67 @@ Backend: [sportico-platform](https://github.com/hoaikhoitran/sportico-platform)
 
 ## Chạy ứng dụng
 
+Toàn bộ cấu hình môi trường đi qua `--dart-define` (không có secret/`.env`
+nào được commit). App đọc hai giá trị:
+
+- `API_BASE_URL` — base URL của backend. **Mặc định:** `http://10.0.2.2:5095`
+  (backend local nhìn từ Android emulator). Nếu không truyền, app in cảnh báo
+  rõ ràng lên console debug.
+- `APP_ENV` — `local` (mặc định) hoặc `production`.
+
+Nguồn duy nhất: [lib/app/config/environment.dart](lib/app/config/environment.dart)
+→ [lib/app/config/app_config.dart](lib/app/config/app_config.dart) → Dio client.
+Không file API/repository nào hardcode URL.
+
 ```sh
 flutter pub get
-
-# Production API (mặc định)
-flutter run
-
-# Backend local (Android emulator: 10.0.2.2 trỏ về máy host)
-flutter run --dart-define=API_BASE_URL=http://10.0.2.2:5095
-
-# Backend local (iOS simulator / desktop)
-flutter run --dart-define=API_BASE_URL=http://localhost:5095
 ```
 
-Mặc định `API_BASE_URL` là `https://sportico-api-khoi.azurewebsites.net`
-(xem [lib/app/config/environment.dart](lib/app/config/environment.dart)).
-Không có secret nào được commit — mọi cấu hình môi trường đi qua
-`--dart-define`.
+**Android emulator + backend local** (`10.0.2.2` trỏ về máy host):
+
+```bash
+flutter run --dart-define=APP_ENV=local --dart-define=API_BASE_URL=http://10.0.2.2:5095
+```
+
+**iOS simulator + backend local:**
+
+```bash
+flutter run --dart-define=APP_ENV=local --dart-define=API_BASE_URL=http://127.0.0.1:5095
+```
+
+**Điện thoại thật + backend local** (thay bằng IPv4 LAN của máy tính —
+xem `ipconfig` / `ifconfig`; điện thoại và máy tính phải cùng Wi-Fi):
+
+```bash
+flutter run --dart-define=APP_ENV=local --dart-define=API_BASE_URL=http://YOUR_COMPUTER_LAN_IP:5095
+```
+
+**Production:**
+
+```bash
+flutter run --dart-define=APP_ENV=production --dart-define=API_BASE_URL=https://sportico-api-khoi.azurewebsites.net
+```
+
+Dùng VS Code: chọn sẵn profile trong `.vscode/launch.json` —
+`Sportico Local Android Emulator`, `Sportico Local iOS Simulator`,
+`Sportico Production`.
+
+### Khắc phục sự cố kết nối
+
+- **Android emulator không gọi được backend** → dùng `10.0.2.2`, **không**
+  dùng `localhost` (localhost trong emulator là chính emulator).
+- **Điện thoại thật không gọi được backend** → dùng địa chỉ IPv4 LAN của máy
+  tính (`ipconfig`), đảm bảo điện thoại và máy tính cùng một mạng Wi-Fi và
+  firewall không chặn cổng 5095.
+- **Backend ASP.NET Core local** phải lắng nghe trên host/port mà thiết bị
+  với tới được — với điện thoại thật, chạy backend bind mọi interface, ví dụ:
+  `dotnet run --urls http://0.0.0.0:5095`.
+- **Android chặn HTTP (cleartext)** → bản debug đã bật
+  `android:usesCleartextTraffic="true"` trong
+  `android/app/src/debug/AndroidManifest.xml` (chỉ áp dụng debug; release vẫn
+  chặn HTTP). iOS đã bật `NSAllowsLocalNetworking` cho backend local.
+- **DNS production lỗi** (`sportico-api-khoi.azurewebsites.net` không phân
+  giải) → chuyển sang backend local bằng `--dart-define` như trên.
 
 ## Kiểm tra chất lượng
 
