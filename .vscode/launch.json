@@ -24,6 +24,28 @@
       ]
     },
     {
+      "name": "Sportico Local Windows (127.0.0.1)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "deviceId": "windows",
+      "args": [
+        "--dart-define=APP_ENV=local",
+        "--dart-define=API_BASE_URL=http://127.0.0.1:5095"
+      ]
+    },
+    {
+      "name": "Sportico Windows - Production",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "deviceId": "windows",
+      "args": [
+        "--dart-define=APP_ENV=production",
+        "--dart-define=API_BASE_URL=https://sportico-api-khoi-g3bpg4a3dnhehng8.japaneast-01.azurewebsites.net"
+      ]
+    },
+    {
       "name": "Sportico Production",
       "request": "launch",
       "type": "dart",
