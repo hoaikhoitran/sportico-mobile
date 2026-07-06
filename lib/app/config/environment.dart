@@ -10,8 +10,8 @@
 /// Ready-made VS Code profiles live in `.vscode/launch.json`; the exact
 /// `flutter run` commands are in the README.
 abstract final class Environment {
-  /// Production backend. Not the default because its DNS is currently
-  /// unreliable — opt in via `--dart-define` (see README).
+  /// Production backend (Azure App Service regional hostname).
+  /// Opt in via `--dart-define` (see README).
   static const String productionApiBaseUrl =
       'https://sportico-api-khoi-g3bpg4a3dnhehng8.japaneast-01.azurewebsites.net';
 

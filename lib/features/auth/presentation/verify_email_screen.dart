@@ -29,6 +29,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
   final _tokenController = TextEditingController();
   bool _showTokenField = false;
   bool _submitting = false;
+  bool _resending = false;
   String? _error;
 
   @override
@@ -62,6 +63,25 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
         context.go(RouteNames.login);
       case ApiFailure(:final error):
         setState(() => _error = error.userMessage);
+    }
+  }
+
+  Future<void> _resend() async {
+    final email = widget.email;
+    if (email == null || _resending) return;
+
+    setState(() => _resending = true);
+    final result = await ref
+        .read(authControllerProvider.notifier)
+        .resendVerificationEmail(email);
+    if (!mounted) return;
+    setState(() => _resending = false);
+
+    switch (result) {
+      case ApiSuccess():
+        AppSnackBar.success(context, 'Đã gửi lại email xác thực tới $email.');
+      case ApiFailure(:final error):
+        AppSnackBar.error(context, error.userMessage);
     }
   }
 
@@ -107,6 +127,16 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
             label: 'Tôi đã xác thực — Đăng nhập',
             onPressed: () => context.go(RouteNames.login),
           ),
+          if (widget.email != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            AppButton(
+              label: 'Gửi lại email xác thực',
+              icon: Icons.forward_to_inbox_outlined,
+              variant: AppButtonVariant.secondary,
+              onPressed: _resend,
+              loading: _resending,
+            ),
+          ],
           const SizedBox(height: AppSpacing.sm),
           AppButton(
             label: _showTokenField

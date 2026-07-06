@@ -8,8 +8,11 @@ import '../../features/auth/presentation/login_screen.dart';
 import '../../features/bookings/presentation/booking_detail_screen.dart';
 import '../../features/bookings/presentation/coach_bookings_screen.dart';
 import '../../features/bookings/presentation/learner_bookings_screen.dart';
+import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/chat/presentation/chat_detail_screen.dart';
 import '../../features/chat/presentation/chat_rooms_screen.dart';
+import '../../features/coaches/presentation/coach_detail_screen.dart';
+import '../../features/coaches/presentation/coach_list_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
@@ -38,8 +41,11 @@ bool _isPublicLocation(String location) {
   return location == RouteNames.login ||
       location == RouteNames.register ||
       location == RouteNames.verifyEmail ||
+      location == RouteNames.forgotPassword ||
       location == RouteNames.packages ||
-      RegExp(r'^/packages/[^/]+$').hasMatch(location);
+      location == RouteNames.coaches ||
+      RegExp(r'^/packages/[^/]+$').hasMatch(location) ||
+      RegExp(r'^/coaches/[^/]+$').hasMatch(location);
 }
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -100,6 +106,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             VerifyEmailScreen(email: state.extra as String?),
       ),
       GoRoute(
+        path: RouteNames.forgotPassword,
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
         path: RouteNames.adminUnsupported,
         builder: (context, state) => const AdminUnsupportedScreen(),
       ),
@@ -158,6 +168,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.packageDetail,
         builder: (context, state) =>
             PackageDetailScreen(packageId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.coaches,
+        builder: (context, state) => const CoachListScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.coachDetail,
+        builder: (context, state) =>
+            CoachDetailScreen(coachId: state.pathParameters['id']!),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,

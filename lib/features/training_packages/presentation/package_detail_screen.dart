@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/router/route_names.dart';
 import '../../../app/theme/app_colors.dart';
@@ -21,8 +22,7 @@ import '../../bookings/data/booking_repository.dart';
 import '../data/models/training_package.dart';
 import 'package_list_controller.dart';
 
-/// Public package detail: info, coach, fixed schedule, manual purchase CTA.
-/// Online payment (PayOS) is intentionally not offered on mobile.
+/// Public package detail: info, coach, fixed schedule, PayOS purchase CTA.
 class PackageDetailScreen extends ConsumerStatefulWidget {
   const PackageDetailScreen({super.key, required this.packageId});
 
@@ -47,18 +47,26 @@ class _PackageDetailScreenState extends ConsumerState<PackageDetailScreen> {
     setState(() => _purchasing = true);
     final result = await ref
         .read(bookingRepositoryProvider)
-        .purchaseManual(package.id);
+        .purchasePayOs(package.id);
     if (!mounted) return;
     setState(() => _purchasing = false);
 
     switch (result) {
-      case ApiSuccess(data: final booking):
+      case ApiSuccess(data: final purchase):
+        final checkoutUrl = purchase.checkoutUrl;
+        if (checkoutUrl != null) {
+          await launchUrl(
+            Uri.parse(checkoutUrl),
+            mode: LaunchMode.externalApplication,
+          );
+        }
+        if (!mounted) return;
         AppSnackBar.success(
           context,
-          'Đăng ký thành công! Lịch tập của bạn đã được tạo.',
+          'Đã tạo đơn — hoàn tất thanh toán trong trang PayOS vừa mở.',
         );
         ref.invalidate(packageDetailProvider(widget.packageId));
-        context.push(RouteNames.bookingDetailPath(booking.id));
+        context.push(RouteNames.bookingDetailPath(purchase.bookingId));
       case ApiFailure(:final error):
         AppSnackBar.error(context, error.userMessage);
     }
@@ -150,7 +158,12 @@ class _Body extends StatelessWidget {
                 const SizedBox(height: AppSpacing.lg),
                 Text('Huấn luyện viên', style: AppTextStyles.sectionTitle),
                 const SizedBox(height: AppSpacing.sm),
-                _CoachCard(coach: package.coach!),
+                _CoachCard(
+                  coach: package.coach!,
+                  onTap: () => context.push(
+                    RouteNames.coachDetailPath(package.coachId),
+                  ),
+                ),
               ],
               if (package.description?.isNotEmpty == true) ...[
                 const SizedBox(height: AppSpacing.lg),
@@ -269,13 +282,15 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _CoachCard extends StatelessWidget {
-  const _CoachCard({required this.coach});
+  const _CoachCard({required this.coach, this.onTap});
 
   final PackageCoachSummary coach;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return AppCard(
+      onTap: onTap,
       child: Row(
         children: [
           CircleAvatar(
@@ -450,7 +465,7 @@ class _BottomBar extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Thanh toán online chưa hỗ trợ trên mobile.',
+            'Thanh toán an toàn qua PayOS.',
             style: AppTextStyles.caption,
             textAlign: TextAlign.center,
           ),
@@ -513,14 +528,16 @@ class _PurchaseSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
               ),
               child: Text(
-                'Ghi danh thủ công: đơn đăng ký kích hoạt ngay và lịch tập '
-                'được tạo tự động theo lịch của gói.',
+                'Bạn sẽ được chuyển sang trang thanh toán PayOS. Sau khi '
+                'thanh toán thành công, lịch tập được tạo tự động theo lịch '
+                'của gói.',
                 style: AppTextStyles.caption.copyWith(color: AppColors.info),
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
             AppButton(
-              label: 'Xác nhận đăng ký',
+              label: 'Tiếp tục thanh toán',
+              icon: Icons.open_in_new_rounded,
               onPressed: () => Navigator.of(context).pop(true),
             ),
             const SizedBox(height: AppSpacing.xs),

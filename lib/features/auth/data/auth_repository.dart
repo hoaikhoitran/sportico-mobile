@@ -40,6 +40,28 @@ class AuthRepository {
   Future<ApiResult<String>> verifyEmail(String token) =>
       _api.verifyEmail(token);
 
+  Future<ApiResult<String>> resendVerificationEmail(String email) =>
+      _api.resendVerificationEmail(email);
+
+  Future<ApiResult<String>> forgotPassword(String email) =>
+      _api.forgotPassword(email);
+
+  Future<ApiResult<String>> resetPassword({
+    required String token,
+    required String newPassword,
+  }) => _api.resetPassword(token: token, newPassword: newPassword);
+
+  Future<ApiResult<String>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) => _api.changePassword(
+    currentPassword: currentPassword,
+    newPassword: newPassword,
+  );
+
+  Future<ApiResult<CurrentUser>> updateMe({String? fullName, String? phone}) =>
+      _api.updateMe(fullName: fullName, phone: phone);
+
   Future<ApiResult<CurrentUser>> getMe() => _api.getMe();
 
   Future<AuthSession?> restoreSession() => _storage.readSession();

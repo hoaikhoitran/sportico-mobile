@@ -6,12 +6,25 @@ abstract final class ApiEndpoints {
   // Auth
   static const register = '/api/auth/register';
   static const verifyEmail = '/api/auth/verify-email';
+  static const resendVerificationEmail = '/api/auth/resend-verification-email';
   static const login = '/api/auth/login';
   static const refreshToken = '/api/auth/refresh-token';
+  static const forgotPassword = '/api/auth/forgot-password';
+  static const resetPassword = '/api/auth/reset-password';
+  static const changePassword = '/api/auth/change-password';
   static const coachRegister = '/api/coaches/register';
 
   // Current user profile (documented in docs/api/users.md)
   static const me = '/api/users/me';
+
+  // Public coach directory
+  static const publicCoaches = '/api/public/coaches';
+  static String publicCoach(String coachId) => '/api/public/coaches/$coachId';
+
+  // Coach reviews
+  static String coachReviews(String coachId) => '/api/coaches/$coachId/reviews';
+  static String coachReviewSummary(String coachId) =>
+      '/api/coaches/$coachId/reviews/summary';
 
   // Training packages
   static const publicPackages = '/api/public/training-packages';
@@ -25,6 +38,7 @@ abstract final class ApiEndpoints {
 
   // Bookings
   static const purchaseManual = '/api/bookings/purchase/manual';
+  static const purchasePayOs = '/api/bookings/purchase/payos';
   static const myBookings = '/api/bookings/me';
   static String booking(String id) => '/api/bookings/$id';
   static const coachBookings = '/api/bookings/coach';

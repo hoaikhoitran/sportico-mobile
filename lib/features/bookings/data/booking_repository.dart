@@ -4,6 +4,7 @@ import '../../../core/network/api_result.dart';
 import '../../../core/network/paged_result.dart';
 import 'booking_api.dart';
 import 'models/booking.dart';
+import 'models/payos_purchase.dart';
 
 class BookingRepository {
   BookingRepository(this._api);
@@ -12,6 +13,9 @@ class BookingRepository {
 
   Future<ApiResult<Booking>> purchaseManual(String trainingPackageId) =>
       _api.purchaseManual(trainingPackageId);
+
+  Future<ApiResult<PayOsPurchase>> purchasePayOs(String trainingPackageId) =>
+      _api.purchasePayOs(trainingPackageId);
 
   Future<ApiResult<PagedResult<Booking>>> myBookings({
     String? status,

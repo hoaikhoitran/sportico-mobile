@@ -7,9 +7,9 @@ import '../../../core/network/dio_client.dart';
 import '../../../core/network/network_exceptions.dart';
 import '../../../core/network/paged_result.dart';
 import 'models/booking.dart';
+import 'models/payos_purchase.dart';
 
-/// docs/api/bookings.md. Only manual purchase is exposed — PayOS checkout is
-/// intentionally NOT implemented on mobile (phase-1 restriction).
+/// docs/api/bookings.md.
 class BookingApi {
   BookingApi(this._dio);
 
@@ -22,7 +22,8 @@ class BookingApi {
       Booking.fromJson(data as Map<String, dynamic>);
 
   /// Activates immediately and auto-creates the training sessions from the
-  /// package schedule (fixed-schedule flow — no manual session booking).
+  /// package schedule. The production backend disables this in favor of
+  /// PayOS (`MANUAL_PURCHASE_DISABLED`).
   Future<ApiResult<Booking>> purchaseManual(String trainingPackageId) {
     return safeApiCall(
       () => _dio.post(
@@ -30,6 +31,18 @@ class BookingApi {
         data: {'trainingPackageId': trainingPackageId},
       ),
       _single,
+    );
+  }
+
+  /// Creates a `pendingPayment` booking plus a PayOS checkout link. The
+  /// booking activates via webhook once the payment completes.
+  Future<ApiResult<PayOsPurchase>> purchasePayOs(String trainingPackageId) {
+    return safeApiCall(
+      () => _dio.post(
+        ApiEndpoints.purchasePayOs,
+        data: {'trainingPackageId': trainingPackageId},
+      ),
+      (data) => PayOsPurchase.fromJson(data as Map<String, dynamic>),
     );
   }
 

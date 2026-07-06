@@ -46,6 +46,64 @@ class AuthApi {
     );
   }
 
+  Future<ApiResult<String>> resendVerificationEmail(String email) {
+    return safeMessageCall(
+      () =>
+          _dio.post(ApiEndpoints.resendVerificationEmail, data: {'email': email}),
+    );
+  }
+
+  Future<ApiResult<String>> forgotPassword(String email) {
+    return safeMessageCall(
+      () => _dio.post(ApiEndpoints.forgotPassword, data: {'email': email}),
+    );
+  }
+
+  Future<ApiResult<String>> resetPassword({
+    required String token,
+    required String newPassword,
+  }) {
+    return safeMessageCall(
+      () => _dio.post(
+        ApiEndpoints.resetPassword,
+        data: {'token': token, 'newPassword': newPassword},
+      ),
+    );
+  }
+
+  Future<ApiResult<String>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) {
+    return safeMessageCall(
+      () => _dio.post(
+        ApiEndpoints.changePassword,
+        data: {
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
+        },
+      ),
+    );
+  }
+
+  Future<ApiResult<CurrentUser>> updateMe({
+    String? fullName,
+    String? phone,
+    String? avatarUrl,
+  }) {
+    return safeApiCall(
+      () => _dio.put(
+        ApiEndpoints.me,
+        data: {
+          'fullName': ?fullName,
+          'phone': ?phone,
+          'avatarUrl': ?avatarUrl,
+        },
+      ),
+      (data) => CurrentUser.fromJson(data as Map<String, dynamic>),
+    );
+  }
+
   Future<ApiResult<AuthTokens>> refreshToken({
     required String email,
     required String refreshToken,

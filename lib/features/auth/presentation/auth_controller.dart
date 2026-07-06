@@ -117,6 +117,37 @@ class AuthController extends Notifier<AuthState> {
   Future<ApiResult<String>> verifyEmail(String token) =>
       _repository.verifyEmail(token.trim());
 
+  Future<ApiResult<String>> resendVerificationEmail(String email) =>
+      _repository.resendVerificationEmail(email.trim());
+
+  Future<ApiResult<String>> forgotPassword(String email) =>
+      _repository.forgotPassword(email.trim());
+
+  Future<ApiResult<String>> resetPassword({
+    required String token,
+    required String newPassword,
+  }) => _repository.resetPassword(token: token.trim(), newPassword: newPassword);
+
+  Future<ApiResult<String>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) => _repository.changePassword(
+    currentPassword: currentPassword,
+    newPassword: newPassword,
+  );
+
+  /// Updates the profile and reflects the result in [AuthState].
+  Future<ApiError?> updateProfile({String? fullName, String? phone}) async {
+    final result = await _repository.updateMe(fullName: fullName, phone: phone);
+    switch (result) {
+      case ApiSuccess():
+        await _loadProfile();
+        return null;
+      case ApiFailure(:final error):
+        return error;
+    }
+  }
+
   /// Re-fetches the profile (e.g. after a profile edit).
   Future<void> refreshProfile() => _loadProfile();
 

@@ -7,9 +7,14 @@ import '../../../app/router/route_names.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../app/theme/app_text_styles.dart';
+import '../../../core/network/api_result.dart';
+import '../../../core/utils/validators.dart';
 import '../../../core/widgets/app_badge.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_snack_bar.dart';
+import '../../../core/widgets/app_text_field.dart';
+import '../../auth/data/models/current_user.dart';
 import '../../auth/presentation/auth_controller.dart';
 
 /// Account tab: profile summary (`GET /api/users/me`), role-aware shortcuts,
@@ -170,6 +175,24 @@ class ProfileScreen extends ConsumerWidget {
                     title: 'Thông báo',
                     onTap: () => context.push(RouteNames.notifications),
                   ),
+                  const Divider(indent: 52),
+                  _MenuTile(
+                    icon: Icons.edit_outlined,
+                    title: 'Chỉnh sửa hồ sơ',
+                    onTap: user == null
+                        ? () {}
+                        : () => _showSheet(
+                            context,
+                            _EditProfileSheet(user: user),
+                          ),
+                  ),
+                  const Divider(indent: 52),
+                  _MenuTile(
+                    icon: Icons.lock_outline_rounded,
+                    title: 'Đổi mật khẩu',
+                    onTap: () =>
+                        _showSheet(context, const _ChangePasswordSheet()),
+                  ),
                 ],
               ),
             ),
@@ -183,6 +206,15 @@ class ProfileScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+
+  static Future<void> _showSheet(BuildContext context, Widget sheet) {
+    return showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) => sheet,
     );
   }
 
@@ -250,6 +282,194 @@ class _MenuTile extends StatelessWidget {
         color: AppColors.textSecondary,
       ),
       onTap: onTap,
+    );
+  }
+}
+
+/// Edits full name and phone (`PUT /api/users/me`).
+class _EditProfileSheet extends ConsumerStatefulWidget {
+  const _EditProfileSheet({required this.user});
+
+  final CurrentUser user;
+
+  @override
+  ConsumerState<_EditProfileSheet> createState() => _EditProfileSheetState();
+}
+
+class _EditProfileSheetState extends ConsumerState<_EditProfileSheet> {
+  final _formKey = GlobalKey<FormState>();
+  late final _name = TextEditingController(text: widget.user.fullName);
+  late final _phone = TextEditingController(text: widget.user.phone ?? '');
+  bool _submitting = false;
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _phone.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _submitting = true);
+    final error = await ref
+        .read(authControllerProvider.notifier)
+        .updateProfile(
+          fullName: _name.text.trim(),
+          phone: _phone.text.trim().isEmpty ? null : _phone.text.trim(),
+        );
+    if (!mounted) return;
+    setState(() => _submitting = false);
+
+    if (error != null) {
+      AppSnackBar.error(context, error.userMessage);
+      return;
+    }
+    AppSnackBar.success(context, 'Đã cập nhật hồ sơ.');
+    Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: AppSpacing.lg,
+        right: AppSpacing.lg,
+        bottom: MediaQuery.viewInsetsOf(context).bottom + AppSpacing.lg,
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('Chỉnh sửa hồ sơ', style: AppTextStyles.sectionTitle),
+            const SizedBox(height: AppSpacing.md),
+            AppTextField(
+              label: 'Họ và tên',
+              controller: _name,
+              validator: Validators.fullName,
+              textInputAction: TextInputAction.next,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            AppTextField(
+              label: 'Số điện thoại (tùy chọn)',
+              controller: _phone,
+              keyboardType: TextInputType.phone,
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) => _submit(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            AppButton(
+              label: 'Lưu thay đổi',
+              onPressed: _submit,
+              loading: _submitting,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// `POST /api/auth/change-password`.
+class _ChangePasswordSheet extends ConsumerStatefulWidget {
+  const _ChangePasswordSheet();
+
+  @override
+  ConsumerState<_ChangePasswordSheet> createState() =>
+      _ChangePasswordSheetState();
+}
+
+class _ChangePasswordSheetState extends ConsumerState<_ChangePasswordSheet> {
+  final _formKey = GlobalKey<FormState>();
+  final _current = TextEditingController();
+  final _next = TextEditingController();
+  bool _obscure = true;
+  bool _submitting = false;
+
+  @override
+  void dispose() {
+    _current.dispose();
+    _next.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _submitting = true);
+    final result = await ref
+        .read(authControllerProvider.notifier)
+        .changePassword(
+          currentPassword: _current.text,
+          newPassword: _next.text,
+        );
+    if (!mounted) return;
+    setState(() => _submitting = false);
+
+    switch (result) {
+      case ApiSuccess():
+        AppSnackBar.success(context, 'Đã đổi mật khẩu.');
+        Navigator.of(context).pop();
+      case ApiFailure(:final error):
+        AppSnackBar.error(context, error.userMessage);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: AppSpacing.lg,
+        right: AppSpacing.lg,
+        bottom: MediaQuery.viewInsetsOf(context).bottom + AppSpacing.lg,
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('Đổi mật khẩu', style: AppTextStyles.sectionTitle),
+            const SizedBox(height: AppSpacing.md),
+            AppTextField(
+              label: 'Mật khẩu hiện tại',
+              controller: _current,
+              obscureText: true,
+              validator: Validators.password,
+              textInputAction: TextInputAction.next,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            AppTextField(
+              label: 'Mật khẩu mới',
+              controller: _next,
+              hint: 'Tối thiểu 8 ký tự',
+              obscureText: _obscure,
+              validator: Validators.password,
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) => _submit(),
+              suffix: IconButton(
+                tooltip: _obscure ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
+                icon: Icon(
+                  _obscure
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                  size: 20,
+                ),
+                onPressed: () => setState(() => _obscure = !_obscure),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            AppButton(
+              label: 'Đổi mật khẩu',
+              onPressed: _submit,
+              loading: _submitting,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -8,11 +8,8 @@ import '../../../core/network/network_exceptions.dart';
 import '../../../core/network/paged_result.dart';
 import 'models/chat_models.dart';
 
-/// docs/api/chat.md — phase-1 scope: list rooms, read messages, send.
-///
-/// `POST /api/chat/rooms` (open a room with a coach) exists on the backend
-/// but is NOT in the phase-1 allow-list, so starting new conversations from
-/// mobile is intentionally unavailable.
+/// docs/api/chat.md — list rooms, open a room with a coach, read messages,
+/// send.
 class ChatApi {
   ChatApi(this._dio);
 
@@ -26,6 +23,14 @@ class ChatApi {
           .whereType<Map<String, dynamic>>()
           .map(ChatRoom.fromJson)
           .toList(),
+    );
+  }
+
+  /// Opens (or returns the existing) 1-1 room with a coach.
+  Future<ApiResult<ChatRoom>> createRoom(String coachId) {
+    return safeApiCall(
+      () => _dio.post(ApiEndpoints.chatRooms, data: {'coachId': coachId}),
+      (data) => ChatRoom.fromJson(data as Map<String, dynamic>),
     );
   }
 

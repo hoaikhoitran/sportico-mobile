@@ -67,8 +67,10 @@ Dùng VS Code: chọn sẵn profile trong `.vscode/launch.json` —
   `android:usesCleartextTraffic="true"` trong
   `android/app/src/debug/AndroidManifest.xml` (chỉ áp dụng debug; release vẫn
   chặn HTTP). iOS đã bật `NSAllowsLocalNetworking` cho backend local.
-- **DNS production lỗi** (`sportico-api-khoi-g3bpg4a3dnhehng8.japaneast-01.azurewebsites.net`
-  không phân giải) → chuyển sang backend local bằng `--dart-define` như trên.
+- **DNS production lỗi** → dùng hostname regional mới
+  `sportico-api-khoi-g3bpg4a3dnhehng8.japaneast-01.azurewebsites.net`
+  (hostname cũ `sportico-api-khoi.azurewebsites.net` không còn phân giải);
+  hoặc chuyển sang backend local bằng `--dart-define` như trên.
 
 ## Kiểm tra chất lượng
 

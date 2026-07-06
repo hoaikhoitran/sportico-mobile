@@ -5,6 +5,7 @@ abstract final class RouteNames {
   static const login = '/login';
   static const register = '/register';
   static const verifyEmail = '/verify-email';
+  static const forgotPassword = '/forgot-password';
 
   // Shell tabs
   static const home = '/home';
@@ -16,6 +17,11 @@ abstract final class RouteNames {
   // Packages
   static const packageDetail = '/packages/:id';
   static String packageDetailPath(String id) => '/packages/$id';
+
+  // Public coach directory
+  static const coaches = '/coaches';
+  static const coachDetail = '/coaches/:id';
+  static String coachDetailPath(String id) => '/coaches/$id';
 
   // Bookings (learner + coach share the detail screen)
   static const bookings = '/bookings';

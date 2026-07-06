@@ -91,7 +91,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 onPressed: () => setState(() => _obscure = !_obscure),
               ),
             ),
-            const SizedBox(height: AppSpacing.xl),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () => context.push(RouteNames.forgotPassword),
+                child: const Text('Quên mật khẩu?'),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sm),
             if (_error != null) AuthErrorBanner(message: _error!),
             AppButton(
               label: 'Đăng nhập',
