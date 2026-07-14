@@ -48,8 +48,10 @@ class AuthApi {
 
   Future<ApiResult<String>> resendVerificationEmail(String email) {
     return safeMessageCall(
-      () =>
-          _dio.post(ApiEndpoints.resendVerificationEmail, data: {'email': email}),
+      () => _dio.post(
+        ApiEndpoints.resendVerificationEmail,
+        data: {'email': email},
+      ),
     );
   }
 
@@ -78,10 +80,7 @@ class AuthApi {
     return safeMessageCall(
       () => _dio.post(
         ApiEndpoints.changePassword,
-        data: {
-          'currentPassword': currentPassword,
-          'newPassword': newPassword,
-        },
+        data: {'currentPassword': currentPassword, 'newPassword': newPassword},
       ),
     );
   }
@@ -94,11 +93,7 @@ class AuthApi {
     return safeApiCall(
       () => _dio.put(
         ApiEndpoints.me,
-        data: {
-          'fullName': ?fullName,
-          'phone': ?phone,
-          'avatarUrl': ?avatarUrl,
-        },
+        data: {'fullName': ?fullName, 'phone': ?phone, 'avatarUrl': ?avatarUrl},
       ),
       (data) => CurrentUser.fromJson(data as Map<String, dynamic>),
     );

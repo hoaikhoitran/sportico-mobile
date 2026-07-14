@@ -146,6 +146,8 @@ class TrainingPackage {
     this.goalType,
     this.status = PackageStatus.unknown,
     this.rejectionReason,
+    this.createdAt,
+    this.updatedAt,
     this.sessions = const [],
     this.coach,
   });
@@ -167,6 +169,12 @@ class TrainingPackage {
   final String? goalType;
   final PackageStatus status;
   final String? rejectionReason;
+
+  /// Submission / last-change timestamps — the admin moderation queue orders
+  /// and dates its cards by these; the learner-facing screens ignore them.
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+
   final List<PackageSessionSlot> sessions;
   final PackageCoachSummary? coach;
 
@@ -192,6 +200,8 @@ class TrainingPackage {
       goalType: json['goalType'] as String?,
       status: PackageStatus.parse(json['status'] as String?),
       rejectionReason: json['rejectionReason'] as String?,
+      createdAt: DateFormatter.parseUtc(json['createdAt'] as String?),
+      updatedAt: DateFormatter.parseUtc(json['updatedAt'] as String?),
       sessions: (json['sessions'] as List<dynamic>? ?? const [])
           .whereType<Map<String, dynamic>>()
           .map(PackageSessionSlot.fromJson)

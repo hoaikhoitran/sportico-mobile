@@ -47,10 +47,7 @@ class _CoachDetailScreenState extends ConsumerState<CoachDetailScreen> {
     switch (result) {
       case ApiSuccess(data: final room):
         ref.invalidate(chatRoomsProvider);
-        context.push(
-          RouteNames.chatDetailPath(room.id),
-          extra: coach.fullName,
-        );
+        context.push(RouteNames.chatDetailPath(room.id), extra: coach.fullName);
       case ApiFailure(:final error):
         AppSnackBar.error(context, error.userMessage);
     }
@@ -171,17 +168,13 @@ class _Body extends ConsumerWidget {
               ],
               if (publishedPackages.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.lg),
-                Text(
-                  'Gói tập đang mở bán',
-                  style: AppTextStyles.sectionTitle,
-                ),
+                Text('Gói tập đang mở bán', style: AppTextStyles.sectionTitle),
                 const SizedBox(height: AppSpacing.sm),
                 for (final package in publishedPackages) ...[
                   _PackageTile(
                     package: package,
-                    onTap: () => context.push(
-                      RouteNames.packageDetailPath(package.id),
-                    ),
+                    onTap: () =>
+                        context.push(RouteNames.packageDetailPath(package.id)),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                 ],
@@ -190,10 +183,7 @@ class _Body extends ConsumerWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      'Đánh giá',
-                      style: AppTextStyles.sectionTitle,
-                    ),
+                    child: Text('Đánh giá', style: AppTextStyles.sectionTitle),
                   ),
                   if (auth.isAuthenticated && auth.isLearner && !_isSelf)
                     TextButton.icon(

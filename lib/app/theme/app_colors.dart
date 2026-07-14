@@ -87,9 +87,13 @@ abstract final class AppColors {
   // white on the strong tone, and a very dark shade of the same hue on the
   // soft container.
   static const Color onSuccess = Color(0xFFFFFFFF);
-  static const Color onSuccessContainer = Color(0xFF00391F); // dark green (hue of #1F7A4D)
+  static const Color onSuccessContainer = Color(
+    0xFF00391F,
+  ); // dark green (hue of #1F7A4D)
   static const Color onWarning = Color(0xFFFFFFFF);
-  static const Color onWarningContainer = Color(0xFF5A2600); // dark amber (hue of #B95000)
+  static const Color onWarningContainer = Color(
+    0xFF5A2600,
+  ); // dark amber (hue of #B95000)
 
   // ===========================================================================
   // LEGACY ALIASES — map old names onto the web roles above. Do not add new

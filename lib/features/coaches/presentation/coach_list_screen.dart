@@ -69,7 +69,16 @@ class _CoachListScreenState extends ConsumerState<CoachListScreen> {
     final listState = ref.watch(coachListControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Huấn luyện viên')),
+      appBar: AppBar(
+        title: const Text('Huấn luyện viên'),
+        actions: [
+          IconButton(
+            tooltip: 'Gói tập',
+            icon: const Icon(Icons.fitness_center_rounded),
+            onPressed: () => context.push(RouteNames.packages),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -122,36 +131,46 @@ class _CoachListScreenState extends ConsumerState<CoachListScreen> {
                           onRefresh: () => ref
                               .read(coachListControllerProvider.notifier)
                               .refresh(),
-                          child: ListView.separated(
+                          child: CustomScrollView(
                             controller: _scrollController,
                             physics: const AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.fromLTRB(
-                              AppSpacing.screenH,
-                              AppSpacing.xxs,
-                              AppSpacing.screenH,
-                              AppSpacing.xl,
-                            ),
-                            itemCount:
-                                value.items.length + (value.hasNext ? 1 : 0),
-                            separatorBuilder: (_, _) =>
-                                const SizedBox(height: AppSpacing.sm),
-                            itemBuilder: (context, index) {
-                              if (index >= value.items.length) {
-                                return const Padding(
-                                  padding: EdgeInsets.all(AppSpacing.md),
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                );
-                              }
-                              final coach = value.items[index];
-                              return _CoachCard(
-                                coach: coach,
-                                onTap: () => context.push(
-                                  RouteNames.coachDetailPath(coach.coachId),
+                            slivers: [
+                              SliverPadding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  AppSpacing.screenH,
+                                  AppSpacing.xxs,
+                                  AppSpacing.screenH,
+                                  AppSpacing.sm,
                                 ),
-                              );
-                            },
+                                sliver: SliverGrid.builder(
+                                  gridDelegate: _coachGridDelegate(context),
+                                  itemCount: value.items.length,
+                                  itemBuilder: (context, index) {
+                                    final coach = value.items[index];
+                                    return _CoachCard(
+                                      coach: coach,
+                                      onTap: () => context.push(
+                                        RouteNames.coachDetailPath(
+                                          coach.coachId,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    bottom: AppSpacing.xl,
+                                  ),
+                                  child: value.hasNext
+                                      ? const Center(
+                                          child: CircularProgressIndicator(),
+                                        )
+                                      : const SizedBox.shrink(),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                 AsyncError(:final error) => AppErrorState(
@@ -159,7 +178,7 @@ class _CoachListScreenState extends ConsumerState<CoachListScreen> {
                   onRetry: () =>
                       ref.read(coachListControllerProvider.notifier).refresh(),
                 ),
-                _ => const AppSkeletonList(),
+                _ => const _CoachGridSkeleton(),
               },
             ),
           ],
@@ -167,6 +186,21 @@ class _CoachListScreenState extends ConsumerState<CoachListScreen> {
       ),
     );
   }
+}
+
+/// Two cards per row. The avatar and paddings are fixed, the text block below
+/// them grows with the user's font scale so a large system font can't overflow
+/// the tile.
+SliverGridDelegateWithFixedCrossAxisCount _coachGridDelegate(
+  BuildContext context,
+) {
+  final textBlock = MediaQuery.textScalerOf(context).scale(104);
+  return SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+    mainAxisSpacing: AppSpacing.sm,
+    crossAxisSpacing: AppSpacing.sm,
+    mainAxisExtent: 96 + textBlock,
+  );
 }
 
 class _CoachCard extends StatelessWidget {
@@ -177,13 +211,22 @@ class _CoachCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final subtitle = coach.headline?.isNotEmpty == true
+        ? coach.headline!
+        : coach.locationLabel ?? 'Huấn luyện viên';
+    final experience = coach.experienceYears != null
+        ? ' · ${coach.experienceYears} năm KN'
+        : '';
+    final hasReviews = coach.totalReviews > 0;
+    final extraSports = coach.sports.length - 1;
+
     return AppCard(
       onTap: onTap,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      child: Column(
         children: [
           CircleAvatar(
-            radius: 26,
+            radius: 28,
             backgroundColor: AppColors.accentBlueSoft,
             foregroundImage: coach.avatarUrl != null
                 ? CachedNetworkImageProvider(coach.avatarUrl!)
@@ -195,80 +238,125 @@ class _CoachCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  coach.fullName,
-                  style: AppTextStyles.cardTitle,
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            coach.fullName,
+            style: AppTextStyles.cardTitle,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: AppTextStyles.caption,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (coach.sports.isNotEmpty)
+                Flexible(
+                  child: AppBadge(
+                    label: coach.sports.first.name,
+                    tone: AppBadgeTone.brand,
+                  ),
+                ),
+              if (extraSports > 0) ...[
+                const SizedBox(width: AppSpacing.xxs),
+                AppBadge(label: '+$extraSports', tone: AppBadgeTone.neutral),
+              ] else if (coach.isOnlineAvailable) ...[
+                const SizedBox(width: AppSpacing.xxs),
+                const AppBadge(label: 'Online', tone: AppBadgeTone.info),
+              ],
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                hasReviews ? Icons.star_rounded : Icons.star_outline_rounded,
+                size: 14,
+                color: hasReviews ? AppColors.warning : AppColors.textSecondary,
+              ),
+              const SizedBox(width: 2),
+              Flexible(
+                child: Text(
+                  hasReviews
+                      ? '${coach.rating.toStringAsFixed(1)} '
+                            '(${coach.totalReviews})$experience'
+                      : 'Chưa có đánh giá',
+                  style: AppTextStyles.caption,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (coach.headline?.isNotEmpty == true) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    coach.headline!,
-                    style: AppTextStyles.bodySecondary,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-                const SizedBox(height: AppSpacing.xs),
-                Wrap(
-                  spacing: AppSpacing.xxs,
-                  runSpacing: AppSpacing.xxs,
-                  children: [
-                    for (final sport in coach.sports)
-                      AppBadge(label: sport.name, tone: AppBadgeTone.brand),
-                    if (coach.isOnlineAvailable)
-                      const AppBadge(label: 'Online', tone: AppBadgeTone.info),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Row(
-                  children: [
-                    if (coach.totalReviews > 0) ...[
-                      const Icon(
-                        Icons.star_rounded,
-                        size: 15,
-                        color: AppColors.warning,
-                      ),
-                      const SizedBox(width: 2),
-                      Text(
-                        '${coach.rating.toStringAsFixed(1)} '
-                        '(${coach.totalReviews})',
-                        style: AppTextStyles.caption,
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                    ],
-                    if (coach.experienceYears != null) ...[
-                      Text(
-                        '${coach.experienceYears} năm KN',
-                        style: AppTextStyles.caption,
-                      ),
-                      const SizedBox(width: AppSpacing.sm),
-                    ],
-                    if (coach.locationLabel != null)
-                      Expanded(
-                        child: Text(
-                          coach.locationLabel!,
-                          style: AppTextStyles.caption,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const Icon(
-            Icons.chevron_right_rounded,
-            color: AppColors.textSecondary,
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Loading placeholder shaped like the coach grid above.
+class _CoachGridSkeleton extends StatelessWidget {
+  const _CoachGridSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return AppShimmer(
+      child: GridView.builder(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.screenH,
+          AppSpacing.xxs,
+          AppSpacing.screenH,
+          AppSpacing.xl,
+        ),
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: _coachGridDelegate(context),
+        itemCount: 6,
+        itemBuilder: (context, index) => Container(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+            border: Border.all(color: AppColors.divider),
+          ),
+          child: const Column(
+            children: [
+              AppSkeletonBox(width: 56, height: 56, shape: BoxShape.circle),
+              SizedBox(height: AppSpacing.xs),
+              AppSkeletonBox(
+                width: 96,
+                height: 12,
+                radius: AppSpacing.radiusXs,
+              ),
+              SizedBox(height: AppSpacing.xxs),
+              AppSkeletonBox(
+                width: 72,
+                height: 10,
+                radius: AppSpacing.radiusXs,
+              ),
+              Spacer(),
+              AppSkeletonBox(
+                width: 64,
+                height: 18,
+                radius: AppSpacing.radiusFull,
+              ),
+              SizedBox(height: AppSpacing.xs),
+              AppSkeletonBox(
+                width: 80,
+                height: 10,
+                radius: AppSpacing.radiusXs,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

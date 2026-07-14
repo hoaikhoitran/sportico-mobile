@@ -9,19 +9,19 @@ abstract final class RouteNames {
 
   // Shell tabs
   static const home = '/home';
-  static const packages = '/packages';
+  static const coaches = '/coaches';
   static const schedule = '/schedule';
   static const messages = '/messages';
   static const account = '/account';
 
-  // Packages
-  static const packageDetail = '/packages/:id';
-  static String packageDetailPath(String id) => '/packages/$id';
-
-  // Public coach directory
-  static const coaches = '/coaches';
+  // Public coach directory (`coaches` above is the tab it lives in)
   static const coachDetail = '/coaches/:id';
   static String coachDetailPath(String id) => '/coaches/$id';
+
+  // Packages — full-screen, opened from the home shortcut or a coach profile
+  static const packages = '/packages';
+  static const packageDetail = '/packages/:id';
+  static String packageDetailPath(String id) => '/packages/$id';
 
   // Bookings (learner + coach share the detail screen)
   static const bookings = '/bookings';
@@ -62,6 +62,45 @@ abstract final class RouteNames {
   // Notifications
   static const notifications = '/notifications';
 
-  // Admin accounts get an "unsupported on mobile" screen in phase 1
-  static const adminUnsupported = '/admin-unsupported';
+  // ───────────────────────────── Admin ─────────────────────────────
+  // Admin shell tabs (own indexed stack, separate from the learner/coach shell)
+  static const adminDashboard = '/admin/dashboard';
+  static const adminApprovals = '/admin/approvals';
+  static const adminFinance = '/admin/finance';
+  static const adminUsers = '/admin/users';
+  static const adminMore = '/admin/more';
+
+  /// Any location inside the admin area (used by the router guard).
+  static bool isAdminLocation(String location) => location.startsWith('/admin');
+
+  // Users
+  static const adminUserCreate = '/admin/users/new';
+  static const adminUserDetail = '/admin/users/:id';
+  static String adminUserDetailPath(String id) => '/admin/users/$id';
+  static const adminUserEdit = '/admin/users/:id/edit';
+  static String adminUserEditPath(String id) => '/admin/users/$id/edit';
+
+  // Moderation details
+  static const adminPackageDetail = '/admin/training-packages/:id';
+  static String adminPackageDetailPath(String id) =>
+      '/admin/training-packages/$id';
+  static const adminPostDetail = '/admin/posts/:id';
+  static String adminPostDetailPath(String id) => '/admin/posts/$id';
+  static const adminReviewReportDetail = '/admin/review-reports/:id';
+  static String adminReviewReportDetailPath(String id) =>
+      '/admin/review-reports/$id';
+  static const adminPayoutAccountDetail = '/admin/payout-accounts/:id';
+  static String adminPayoutAccountDetailPath(String id) =>
+      '/admin/payout-accounts/$id';
+
+  // Withdrawals
+  static const adminWithdrawalDetail = '/admin/withdrawals/:id';
+  static String adminWithdrawalDetailPath(String id) =>
+      '/admin/withdrawals/$id';
+  static const adminWithdrawalReceipt = '/admin/withdrawals/:id/receipt';
+  static String adminWithdrawalReceiptPath(String id) =>
+      '/admin/withdrawals/$id/receipt';
+
+  // Platform settings
+  static const adminCommission = '/admin/settings/commission';
 }

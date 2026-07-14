@@ -72,6 +72,9 @@ reports/
 .env.*
 !.env.example
 
+# Per-developer env file (LAN IP of your machine); the shared ones are committed
+dart_defines/local_device.json
+
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id

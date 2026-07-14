@@ -92,6 +92,22 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
+            // An account that holds the admin role alongside learner/coach
+            // keeps this app as its home and reaches the admin area from here.
+            // (An admin-only account is routed straight into the admin shell.)
+            if (auth.isAdmin) ...[
+              Text('Quản trị', style: AppTextStyles.sectionTitle),
+              const SizedBox(height: AppSpacing.sm),
+              AppCard(
+                padding: EdgeInsets.zero,
+                child: _MenuTile(
+                  icon: Icons.admin_panel_settings_outlined,
+                  title: 'Khu vực quản trị',
+                  onTap: () => context.go(RouteNames.adminDashboard),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+            ],
             if (auth.isCoach) ...[
               Text('Huấn luyện viên', style: AppTextStyles.sectionTitle),
               const SizedBox(height: AppSpacing.sm),

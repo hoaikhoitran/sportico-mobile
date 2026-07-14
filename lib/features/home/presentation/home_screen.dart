@@ -54,7 +54,9 @@ class HomeScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
-            _HeroBanner(onExplore: () => context.push(RouteNames.coaches)),
+            // The coach directory is a tab now — switch to it instead of
+            // stacking a second copy on top of the shell.
+            _HeroBanner(onExplore: () => context.go(RouteNames.coaches)),
             const SizedBox(height: AppSpacing.xl),
             Text('Truy cập nhanh', style: AppTextStyles.sectionTitle),
             const SizedBox(height: AppSpacing.sm),
@@ -71,7 +73,7 @@ class HomeScreen extends ConsumerWidget {
                       background: AppColors.accentOrangeSoft,
                       title: 'Gói tập',
                       subtitle: 'Khám phá gói luyện tập',
-                      onTap: () => context.go(RouteNames.packages),
+                      onTap: () => context.push(RouteNames.packages),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),

@@ -134,7 +134,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                               ? 'Khám phá gói tập'
                               : null,
                           onAction: _upcoming && !effectiveCoachView
-                              ? () => context.go(RouteNames.packages)
+                              ? () => context.push(RouteNames.packages)
                               : null,
                         )
                       : RefreshIndicator(

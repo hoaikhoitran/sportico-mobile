@@ -3,6 +3,24 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/admin/moderation/data/models/admin_post.dart';
+import '../../features/admin/moderation/data/models/coach_payout_account.dart';
+import '../../features/admin/moderation/data/models/review_report.dart';
+import '../../features/admin/moderation/presentation/admin_approvals_screen.dart';
+import '../../features/admin/moderation/presentation/admin_package_detail_screen.dart';
+import '../../features/admin/moderation/presentation/admin_payout_account_detail_screen.dart';
+import '../../features/admin/moderation/presentation/admin_post_detail_screen.dart';
+import '../../features/admin/moderation/presentation/admin_review_report_detail_screen.dart';
+import '../../features/admin/dashboard/presentation/admin_dashboard_screen.dart';
+import '../../features/admin/settings/presentation/admin_commission_screen.dart';
+import '../../features/admin/shell/presentation/admin_more_screen.dart';
+import '../../features/admin/shell/presentation/admin_shell_screen.dart';
+import '../../features/admin/users/presentation/admin_user_detail_screen.dart';
+import '../../features/admin/users/presentation/admin_user_form_screen.dart';
+import '../../features/admin/users/presentation/admin_users_screen.dart';
+import '../../features/admin/withdrawals/presentation/admin_finance_screen.dart';
+import '../../features/admin/withdrawals/presentation/admin_withdrawal_detail_screen.dart';
+import '../../features/admin/withdrawals/presentation/admin_withdrawal_receipt_screen.dart';
 import '../../features/auth/presentation/auth_controller.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/bookings/presentation/booking_detail_screen.dart';
@@ -22,9 +40,9 @@ import '../../features/coach/presentation/coach_package_form_screen.dart';
 import '../../features/coach/presentation/coach_packages_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
-import '../../features/shell/presentation/admin_unsupported_screen.dart';
 import '../../features/sessions/presentation/schedule_screen.dart';
 import '../../features/shell/presentation/main_shell_screen.dart';
+import '../../features/training_packages/data/models/training_package.dart';
 import '../../features/training_packages/presentation/package_detail_screen.dart';
 import '../../features/training_packages/presentation/package_list_screen.dart';
 import '../../features/training_plan/presentation/assessment_screen.dart';
@@ -73,16 +91,31 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return _isPublicLocation(location) ? null : RouteNames.login;
 
         case AuthStatus.authenticated:
-          if (auth.isAdminOnly) {
-            return location == RouteNames.adminUnsupported
-                ? null
-                : RouteNames.adminUnsupported;
+          final isAdminLocation = RouteNames.isAdminLocation(location);
+
+          // Guard: the admin area is closed to everyone else. Hiding the
+          // entry points is not enough — a manual/deep link lands here too.
+          // Roles come from the refreshed `/users/me` profile (AuthState),
+          // not from a locally decoded JWT alone.
+          if (isAdminLocation && !auth.isAdmin) {
+            return RouteNames.home;
           }
+
+          // An admin-only account has no learner/coach experience to fall back
+          // on, so every non-admin location sends it to the admin dashboard.
+          if (auth.isAdminOnly && !isAdminLocation) {
+            return RouteNames.adminDashboard;
+          }
+
+          // Entry points: an admin-only account starts in the admin area, an
+          // account that also has a learner/coach role keeps its normal home
+          // (and reaches the admin area from the profile screen).
           if (location == RouteNames.splash ||
               location == RouteNames.login ||
-              location == RouteNames.register ||
-              location == RouteNames.adminUnsupported) {
-            return RouteNames.home;
+              location == RouteNames.register) {
+            return auth.isAdminOnly
+                ? RouteNames.adminDashboard
+                : RouteNames.home;
           }
           return null;
       }
@@ -109,9 +142,125 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RouteNames.forgotPassword,
         builder: (context, state) => const ForgotPasswordScreen(),
       ),
+      // Admin shell: its own indexed stack, so admin tabs keep their list and
+      // filter state independently of the learner/coach shell.
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            AdminShellScreen(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.adminDashboard,
+                builder: (context, state) => const AdminDashboardScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.adminApprovals,
+                builder: (context, state) => const AdminApprovalsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.adminFinance,
+                builder: (context, state) => const AdminFinanceScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.adminUsers,
+                builder: (context, state) => const AdminUsersScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RouteNames.adminMore,
+                builder: (context, state) => const AdminMoreScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      // Admin full-screen routes (cover the admin bottom navigation).
       GoRoute(
-        path: RouteNames.adminUnsupported,
-        builder: (context, state) => const AdminUnsupportedScreen(),
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.adminUserCreate,
+        builder: (context, state) => const AdminUserFormScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.adminUserEdit,
+        builder: (context, state) =>
+            AdminUserFormScreen(userId: state.pathParameters['id']),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.adminUserDetail,
+        builder: (context, state) =>
+            AdminUserDetailScreen(userId: state.pathParameters['id']!),
+      ),
+      // The moderation queues hand the loaded entity over in `extra` — the
+      // admin API has no GET-by-id for these three.
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.adminPackageDetail,
+        builder: (context, state) => AdminPackageDetailScreen(
+          packageId: state.pathParameters['id']!,
+          initial: state.extra as TrainingPackage?,
+        ),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.adminPostDetail,
+        builder: (context, state) => AdminPostDetailScreen(
+          postId: state.pathParameters['id']!,
+          initial: state.extra as AdminPost?,
+        ),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.adminReviewReportDetail,
+        builder: (context, state) => AdminReviewReportDetailScreen(
+          reportId: state.pathParameters['id']!,
+          initial: state.extra as ReviewReport?,
+        ),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.adminPayoutAccountDetail,
+        builder: (context, state) => AdminPayoutAccountDetailScreen(
+          accountId: state.pathParameters['id']!,
+          initial: state.extra as CoachPayoutAccount?,
+        ),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.adminWithdrawalReceipt,
+        builder: (context, state) => AdminWithdrawalReceiptScreen(
+          withdrawalId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.adminWithdrawalDetail,
+        builder: (context, state) => AdminWithdrawalDetailScreen(
+          withdrawalId: state.pathParameters['id']!,
+        ),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.adminCommission,
+        builder: (context, state) => const AdminCommissionScreen(),
       ),
 
       // Authenticated shell: 5 tabs with independent navigation stacks.
@@ -130,8 +279,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: RouteNames.packages,
-                builder: (context, state) => const PackageListScreen(),
+                path: RouteNames.coaches,
+                builder: (context, state) => const CoachListScreen(),
               ),
             ],
           ),
@@ -163,16 +312,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
 
       // Full-screen routes (cover the bottom navigation).
+      // The package catalog lost its tab to the coach directory; it is still
+      // reachable from the home shortcut and from a coach profile.
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: RouteNames.packages,
+        builder: (context, state) => const PackageListScreen(),
+      ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: RouteNames.packageDetail,
         builder: (context, state) =>
             PackageDetailScreen(packageId: state.pathParameters['id']!),
-      ),
-      GoRoute(
-        parentNavigatorKey: _rootNavigatorKey,
-        path: RouteNames.coaches,
-        builder: (context, state) => const CoachListScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,

@@ -33,6 +33,11 @@ class AppBadge extends StatelessWidget {
       ),
       child: Text(
         label,
+        // A pill is always one line: in a narrow slot (grid cards) a wrapping
+        // label would grow the badge into a multi-line block.
+        maxLines: 1,
+        softWrap: false,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontSize: 11.5,
           fontWeight: FontWeight.w600,

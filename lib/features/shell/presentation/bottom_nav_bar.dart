@@ -24,9 +24,9 @@ class AppBottomNavBar extends StatelessWidget {
           label: 'Trang chủ',
         ),
         NavigationDestination(
-          icon: Icon(Icons.fitness_center_outlined),
-          selectedIcon: Icon(Icons.fitness_center_rounded),
-          label: 'Gói tập',
+          icon: Icon(Icons.sports_outlined),
+          selectedIcon: Icon(Icons.sports_rounded),
+          label: 'HLV',
         ),
         NavigationDestination(
           icon: Icon(Icons.calendar_month_outlined),

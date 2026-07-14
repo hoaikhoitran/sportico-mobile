@@ -90,4 +90,52 @@ abstract final class ApiEndpoints {
 
   // Public user profile
   static String publicUser(String id) => '/api/users/$id';
+
+  // ───────────────────────────── Admin ─────────────────────────────
+  // Every route below is `[Authorize(Roles = "admin")]` on the backend.
+  static const adminDashboard = '/api/admin/dashboard';
+
+  static const adminUsers = '/api/admin/users';
+  static String adminUser(String id) => '/api/admin/users/$id';
+
+  static const adminPendingPackages = '/api/admin/training-packages/pending';
+  static String adminApprovePackage(String id) =>
+      '/api/admin/training-packages/$id/approve';
+  static String adminRejectPackage(String id) =>
+      '/api/admin/training-packages/$id/reject';
+
+  static const adminPendingPosts = '/api/admin/posts/pending';
+  static String adminApprovePost(String id) => '/api/admin/posts/$id/approve';
+  static String adminRejectPost(String id) => '/api/admin/posts/$id/reject';
+
+  static const adminReviewReports = '/api/admin/review-reports';
+  static String adminResolveReviewReport(String id) =>
+      '/api/admin/review-reports/$id/resolve';
+
+  static const adminPendingPayoutAccounts =
+      '/api/admin/coach-payout-accounts/pending';
+  static String adminVerifyPayoutAccount(String id) =>
+      '/api/admin/coach-payout-accounts/$id/verify';
+  static String adminRejectPayoutAccount(String id) =>
+      '/api/admin/coach-payout-accounts/$id/reject';
+
+  static const adminWithdrawals = '/api/admin/withdrawal-requests';
+  static const adminPendingWithdrawals =
+      '/api/admin/withdrawal-requests/pending';
+  static String adminWithdrawal(String id) =>
+      '/api/admin/withdrawal-requests/$id';
+  static String adminApproveWithdrawal(String id) =>
+      '/api/admin/withdrawal-requests/$id/approve';
+  static String adminRejectWithdrawal(String id) =>
+      '/api/admin/withdrawal-requests/$id/reject';
+  static String adminMarkWithdrawalPaid(String id) =>
+      '/api/admin/withdrawal-requests/$id/mark-paid';
+  static String adminRefreshPayoutStatus(String id) =>
+      '/api/admin/withdrawal-requests/$id/refresh-payout-status';
+  static String adminRetryPayout(String id) =>
+      '/api/admin/withdrawal-requests/$id/retry-payout';
+  static String adminWithdrawalReceipt(String id) =>
+      '/api/admin/withdrawal-requests/$id/receipt';
+
+  static const adminCommission = '/api/admin/platform-settings/commission';
 }

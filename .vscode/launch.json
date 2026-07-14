@@ -1,6 +1,7 @@
 {
   // Sportico run profiles. Pick the one matching your device + backend.
-  // The exact equivalent CLI commands are documented in README.md.
+  // Environment values live in dart_defines/*.json; the equivalent CLI
+  // commands are documented in README.md.
   "version": "0.2.0",
   "configurations": [
     {
@@ -8,20 +9,14 @@
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": [
-        "--dart-define=APP_ENV=local",
-        "--dart-define=API_BASE_URL=http://10.0.2.2:5095"
-      ]
+      "args": ["--dart-define-from-file", "dart_defines/local_android.json"]
     },
     {
       "name": "Sportico Local iOS Simulator",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": [
-        "--dart-define=APP_ENV=local",
-        "--dart-define=API_BASE_URL=http://127.0.0.1:5095"
-      ]
+      "args": ["--dart-define-from-file", "dart_defines/local_ios.json"]
     },
     {
       "name": "Sportico Local Windows (127.0.0.1)",
@@ -29,10 +24,14 @@
       "type": "dart",
       "program": "lib/main.dart",
       "deviceId": "windows",
-      "args": [
-        "--dart-define=APP_ENV=local",
-        "--dart-define=API_BASE_URL=http://127.0.0.1:5095"
-      ]
+      "args": ["--dart-define-from-file", "dart_defines/local_ios.json"]
+    },
+    {
+      "name": "Sportico Production",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": ["--dart-define-from-file", "dart_defines/production.json"]
     },
     {
       "name": "Sportico Windows - Production",
@@ -40,24 +39,16 @@
       "type": "dart",
       "program": "lib/main.dart",
       "deviceId": "windows",
-      "args": [
-        "--dart-define=APP_ENV=production",
-        "--dart-define=API_BASE_URL=https://sportico-api-khoi-g3bpg4a3dnhehng8.japaneast-01.azurewebsites.net"
-      ]
+      "args": ["--dart-define-from-file", "dart_defines/production.json"]
     },
     {
-      "name": "Sportico Production",
+      "name": "Sportico Local Physical Device (LAN)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "args": [
-        "--dart-define=APP_ENV=production",
-        "--dart-define=API_BASE_URL=https://sportico-api-khoi-g3bpg4a3dnhehng8.japaneast-01.azurewebsites.net"
-      ]
+      // Copy dart_defines/local_device.example.json to local_device.json and
+      // put your computer's LAN IPv4 in it (ipconfig). The file is gitignored.
+      "args": ["--dart-define-from-file", "dart_defines/local_device.json"]
     }
-    // Physical phone + local backend: copy a profile above and replace the
-    // URL with your computer's LAN IPv4 (ipconfig / ifconfig), e.g.
-    // "--dart-define=API_BASE_URL=http://192.168.1.10:5095".
-    // Phone and computer must be on the same Wi-Fi network.
   ]
 }

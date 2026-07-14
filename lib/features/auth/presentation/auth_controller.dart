@@ -126,7 +126,8 @@ class AuthController extends Notifier<AuthState> {
   Future<ApiResult<String>> resetPassword({
     required String token,
     required String newPassword,
-  }) => _repository.resetPassword(token: token.trim(), newPassword: newPassword);
+  }) =>
+      _repository.resetPassword(token: token.trim(), newPassword: newPassword);
 
   Future<ApiResult<String>> changePassword({
     required String currentPassword,

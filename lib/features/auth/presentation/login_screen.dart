@@ -107,10 +107,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             const SizedBox(height: AppSpacing.sm),
             AppButton(
-              label: 'Khám phá gói tập',
+              label: 'Khám phá huấn luyện viên',
               icon: Icons.explore_outlined,
               variant: AppButtonVariant.ghost,
-              onPressed: () => context.go(RouteNames.packages),
+              onPressed: () => context.go(RouteNames.coaches),
             ),
             const SizedBox(height: AppSpacing.lg),
             Row(

@@ -50,10 +50,7 @@ Future<(ProviderContainer, ApiEvidenceRecorder)> pumpRealApp(
   container.read(dioProvider).interceptors.add(recorder);
 
   await tester.pumpWidget(
-    UncontrolledProviderScope(
-      container: container,
-      child: const SporticoApp(),
-    ),
+    UncontrolledProviderScope(container: container, child: const SporticoApp()),
   );
   await tester.pumpAndSettle(const Duration(seconds: 2));
   return (container, recorder);
@@ -76,8 +73,10 @@ Future<bool> waitFor(
   return false;
 }
 
-Future<void> settle(WidgetTester tester,
-    [Duration wait = const Duration(seconds: 1)]) async {
+Future<void> settle(
+  WidgetTester tester, [
+  Duration wait = const Duration(seconds: 1),
+]) async {
   await tester.pump(wait);
   await tester.pump(const Duration(milliseconds: 300));
 }

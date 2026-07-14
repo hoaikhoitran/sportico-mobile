@@ -160,9 +160,8 @@ class _Body extends StatelessWidget {
                 const SizedBox(height: AppSpacing.sm),
                 _CoachCard(
                   coach: package.coach!,
-                  onTap: () => context.push(
-                    RouteNames.coachDetailPath(package.coachId),
-                  ),
+                  onTap: () =>
+                      context.push(RouteNames.coachDetailPath(package.coachId)),
                 ),
               ],
               if (package.description?.isNotEmpty == true) ...[
