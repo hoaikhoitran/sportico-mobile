@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/api_result.dart';
-import '../../shared/presentation/admin_retry.dart';
+import '../../../../core/network/retry_policy.dart';
 import '../data/admin_dashboard_api.dart';
 import '../data/models/admin_dashboard.dart';
 
@@ -37,5 +37,5 @@ class AdminDashboardController extends AsyncNotifier<AdminDashboard> {
 final adminDashboardControllerProvider =
     AsyncNotifierProvider.autoDispose<AdminDashboardController, AdminDashboard>(
       AdminDashboardController.new,
-      retry: adminNoRetry,
+      retry: noRetry,
     );

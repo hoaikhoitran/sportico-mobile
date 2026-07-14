@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../app/theme/app_text_styles.dart';
+import '../../../core/network/api_error.dart';
 import '../../../core/network/api_result.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/app_button.dart';
@@ -160,9 +161,30 @@ class _CoachOnboardingScreenState extends ConsumerState<CoachOnboardingScreen> {
                   ),
                 ),
               )
+            else if (sportOptions.hasError && knownSports.isEmpty)
+              // A failed lookup is not the same as an empty catalogue: say so,
+              // and let the user retry instead of forcing manual id entry.
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      sportOptions.error is ApiError
+                          ? (sportOptions.error! as ApiError).userMessage
+                          : 'Không tải được danh mục môn thể thao.',
+                      style: AppTextStyles.caption.copyWith(
+                        color: AppColors.danger,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => ref.invalidate(sportOptionsProvider),
+                    child: const Text('Thử lại'),
+                  ),
+                ],
+              )
             else if (knownSports.isEmpty)
               Text(
-                'Chưa lấy được danh mục môn thể thao — nhập mã môn bên dưới.',
+                'Chưa có môn thể thao nào trên hệ thống — nhập mã môn bên dưới.',
                 style: AppTextStyles.caption,
               )
             else

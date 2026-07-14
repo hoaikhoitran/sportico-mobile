@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/config/app_config.dart';
 import '../../../../core/network/api_error.dart';
 import '../../../../core/network/api_result.dart';
+import '../../../../core/network/retry_policy.dart';
 import '../../../../core/utils/paged_list_state.dart';
 import '../../shared/models/admin_status.dart';
 import '../../shared/presentation/admin_mutation_controller.dart';
-import '../../shared/presentation/admin_retry.dart';
 import '../data/admin_withdrawals_api.dart';
 import '../data/models/withdrawal_request.dart';
 
@@ -77,7 +77,7 @@ final adminWithdrawalsControllerProvider =
     AsyncNotifierProvider.autoDispose<
       AdminWithdrawalsController,
       PagedListState<WithdrawalRequest>
-    >(AdminWithdrawalsController.new, retry: adminNoRetry);
+    >(AdminWithdrawalsController.new, retry: noRetry);
 
 /// One withdrawal, with the actions its current status allows.
 ///
@@ -150,7 +150,7 @@ class AdminWithdrawalDetailController extends AsyncNotifier<WithdrawalRequest> {
 final adminWithdrawalDetailProvider = AsyncNotifierProvider.autoDispose
     .family<AdminWithdrawalDetailController, WithdrawalRequest, String>(
       AdminWithdrawalDetailController.new,
-      retry: adminNoRetry,
+      retry: noRetry,
     );
 
 /// `GET /api/admin/withdrawal-requests/{id}/receipt`.
@@ -161,4 +161,4 @@ final adminWithdrawalReceiptProvider = FutureProvider.autoDispose
         ApiSuccess(:final data) => data,
         ApiFailure(:final error) => throw error,
       };
-    }, retry: adminNoRetry);
+    }, retry: noRetry);

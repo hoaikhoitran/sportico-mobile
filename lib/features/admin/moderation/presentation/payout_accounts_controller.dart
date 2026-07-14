@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/config/app_config.dart';
 import '../../../../core/network/api_error.dart';
 import '../../../../core/network/api_result.dart';
+import '../../../../core/network/retry_policy.dart';
 import '../../../../core/utils/paged_list_state.dart';
 import '../../shared/presentation/admin_mutation_controller.dart';
-import '../../shared/presentation/admin_retry.dart';
 import '../data/admin_moderation_api.dart';
 import '../data/models/coach_payout_account.dart';
 
@@ -91,4 +91,4 @@ final payoutAccountsControllerProvider =
     AsyncNotifierProvider.autoDispose<
       PayoutAccountsController,
       PagedListState<CoachPayoutAccount>
-    >(PayoutAccountsController.new, retry: adminNoRetry);
+    >(PayoutAccountsController.new, retry: noRetry);

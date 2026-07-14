@@ -340,7 +340,24 @@ class _CoachPackageFormScreenState
                 ),
               ),
               const SizedBox(height: AppSpacing.xs),
-              if (knownSports.isNotEmpty)
+              if (sportOptions.hasError && knownSports.isEmpty)
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Không tải được danh mục môn thể thao.',
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.danger,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => ref.invalidate(sportOptionsProvider),
+                      child: const Text('Thử lại'),
+                    ),
+                  ],
+                )
+              else if (knownSports.isNotEmpty)
                 Wrap(
                   spacing: AppSpacing.xs,
                   runSpacing: AppSpacing.xxs,

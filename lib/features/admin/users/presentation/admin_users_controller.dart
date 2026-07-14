@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/config/app_config.dart';
 import '../../../../core/network/api_error.dart';
 import '../../../../core/network/api_result.dart';
+import '../../../../core/network/retry_policy.dart';
 import '../../../../core/utils/paged_list_state.dart';
 import '../../shared/models/admin_status.dart';
 import '../../shared/presentation/admin_mutation_controller.dart';
-import '../../shared/presentation/admin_retry.dart';
 import '../data/admin_users_api.dart';
 import '../data/models/admin_user.dart';
 
@@ -129,7 +129,7 @@ final adminUsersControllerProvider =
     AsyncNotifierProvider.autoDispose<
       AdminUsersController,
       PagedListState<AdminUser>
-    >(AdminUsersController.new, retry: adminNoRetry);
+    >(AdminUsersController.new, retry: noRetry);
 
 /// One user (`GET /api/admin/users/{id}`) — detail screen and edit prefill.
 final adminUserDetailProvider = FutureProvider.autoDispose
@@ -139,4 +139,4 @@ final adminUserDetailProvider = FutureProvider.autoDispose
         ApiSuccess(:final data) => data,
         ApiFailure(:final error) => throw error,
       };
-    }, retry: adminNoRetry);
+    }, retry: noRetry);

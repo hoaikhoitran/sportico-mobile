@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/api_error.dart';
 import '../../../../core/network/api_result.dart';
+import '../../../../core/network/retry_policy.dart';
 import '../../shared/presentation/admin_mutation_controller.dart';
-import '../../shared/presentation/admin_retry.dart';
 import '../data/admin_settings_api.dart';
 import '../data/models/platform_commission.dart';
 
@@ -43,7 +43,7 @@ final adminCommissionControllerProvider =
     AsyncNotifierProvider.autoDispose<
       AdminCommissionController,
       PlatformCommission
-    >(AdminCommissionController.new, retry: adminNoRetry);
+    >(AdminCommissionController.new, retry: noRetry);
 
 /// Key of the commission mutation (single global setting → constant id).
 const adminCommissionMutationKey = 'update-commission:platform';
